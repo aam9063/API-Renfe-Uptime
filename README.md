@@ -23,7 +23,7 @@ acceptance check has been observed.
 | --- | --- | --- |
 | M0 | Scaffolding and constraints: monorepo, check runner, canonical templates, docs, guards, CI | built, awaiting review |
 | M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
-| M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | pending |
+| M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
 | M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | pending |
 | M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
 | M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
@@ -60,8 +60,13 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
 - **CI** (`.github/workflows/check.yml`): `make check` on Linux, the same checks on Windows, and a
   Playwright job. Never runs `make check` against real Renfe.
 
-Still missing on purpose: the HTTP adapter, the eight probe modules, the scheduler, migrations,
-views, and the four screens.
+- **Probes, transport and scheduler** (`prober/src/anden9/probes`, `adapters`, `scheduler.py`): the
+  eight Renfe endpoints plus the control endpoint, an `httpx` transport with one lock per host and
+  every transport error mapped, a scheduler that runs what is due, gates a `down` behind the
+  control endpoint and pauses a probe on `Retry-After`, and a CLI with `probe once`, `run` and
+  `logs`.
+
+Still missing on purpose: migrations, views, the store adapter, and the four screens.
 
 ## How measurement works
 

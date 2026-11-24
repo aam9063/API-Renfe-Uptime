@@ -64,7 +64,7 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Code location: `prober/src/anden9/probes/`, catalog in `probes/catalog.py`.
 - Backend/API involved: the Renfe endpoints listed in `docs/probes.md`.
 - Known pitfalls: one request per run, no retry, honest User-Agent, budget enforced by `scripts/request_budget.py`.
-- Status: catalog built (M0), probe modules pending (M2).
+- Status: built (M2). `uv run anden9 probe once <id> --verbose` prints what it saw.
 
 ## classifier
 
@@ -99,8 +99,8 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Selectors for programmatic control: not applicable.
 - Code location: `prober/src/anden9/scheduler.py`.
 - Backend/API involved: none outbound except the probes it triggers.
-- Known pitfalls: a 429 with `Retry-After` pauses the probe, it never triggers a retry.
-- Status: pending (M2).
+- Known pitfalls: a 429 with `Retry-After` pauses the probe, it never triggers a retry. A `down` is only published when the control endpoint answered in the same minute.
+- Status: built (M2).
 
 ## store
 

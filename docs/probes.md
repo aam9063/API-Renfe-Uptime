@@ -52,3 +52,13 @@ feature document. None of them is assumed:
 
 Endpoint knowledge comes from `renfe-cli` by Luis González (MIT). Read it from a clone outside
 this repository before implementing each probe, and record what changed there.
+
+## What is confirmed and what is not
+
+`probe once --all` is the only thing that answers this, and the answer is in the M2 feature
+document. Two probes measure transport availability only until their request body is confirmed:
+`nsv-search` and `legacy-shop`. The rest check the shape the brief describes.
+
+An unexpected 4xx that is not 403 or 429 becomes `unknown` with reason `probe_error`: it usually
+means our request was wrong, so it is not evidence about Renfe. 404 and 410 stay `down`, because a
+vanished endpoint is a real failure.
