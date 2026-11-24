@@ -15,7 +15,7 @@ from anden9.domain.outcome import CheckResult
 from anden9.domain.ports import HttpError, HttpRequest, HttpResponse
 from anden9.probes.base import ProbeContext
 from anden9.probes.nsv_headers import session_headers
-from anden9.probes.nsv_token import api_key
+from anden9.probes.nsv_token import access_token
 
 PROBE_ID = "nsv-stations"
 EXPECTED_STATUS = 200
@@ -54,12 +54,15 @@ class NsvStationsProbe:
     probe_id: str = PROBE_ID
 
     async def run(self, context: ProbeContext) -> CheckResult:
-        await api_key(context, context.session)
+        token = await access_token(context, context.session)
+        headers = session_headers(context.session)
+        if token is not None:
+            headers["authorization"] = f"Bearer {token}"
         request = HttpRequest(
             method="GET",
             url=context.spec.url,
             timeout_s=context.spec.timeout_s,
-            headers=session_headers(context.session),
+            headers=headers,
         )
         try:
             response = await context.http.send(request)
