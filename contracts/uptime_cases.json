@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "about": "Shared cases of the uptime formula. Seconds in, basis points (hundredths of a percent, truncated) and nines out. Run by pytest against the Python reference and the SQL functions, and by vitest against web/src/lib/format.ts.",
+  "windows": [
+    {
+      "name": "no downtime is reported as sin caidas, never as infinite nines",
+      "window_s": 86400,
+      "seconds": { "up": 86400, "degraded": 0, "down": 0, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "no_downtime", "uptime_bp": 10000, "nines": null, "percent_text": "100,00 %", "nines_text": "sin caídas" }
+    },
+    {
+      "name": "everything blocked leaves no data, not zero uptime",
+      "window_s": 86400,
+      "seconds": { "up": 0, "degraded": 0, "down": 0, "blocked": 86400, "unknown": 0 },
+      "expected": { "status": "no_data", "uptime_bp": null, "nines": null, "percent_text": "sin datos", "nines_text": "sin datos" }
+    },
+    {
+      "name": "nothing measured at all is no data",
+      "window_s": 86400,
+      "seconds": { "up": 0, "degraded": 0, "down": 0, "blocked": 0, "unknown": 86400 },
+      "expected": { "status": "no_data", "uptime_bp": null, "nines": null, "percent_text": "sin datos", "nines_text": "sin datos" }
+    },
+    {
+      "name": "a denominator under half the window is insufficient",
+      "window_s": 86400,
+      "seconds": { "up": 43000, "degraded": 0, "down": 199, "blocked": 0, "unknown": 43201 },
+      "expected": { "status": "insufficient", "uptime_bp": null, "nines": null, "percent_text": "datos insuficientes", "nines_text": "datos insuficientes" }
+    },
+    {
+      "name": "exactly half the window is enough",
+      "window_s": 86400,
+      "seconds": { "up": 43200, "degraded": 0, "down": 0, "blocked": 0, "unknown": 43200 },
+      "expected": { "status": "no_downtime", "uptime_bp": 10000, "nines": null, "percent_text": "100,00 %", "nines_text": "sin caídas" }
+    },
+    {
+      "name": "99.996 is truncated to 99,99 and never rounded to 100,00",
+      "window_s": 100000,
+      "seconds": { "up": 99996, "degraded": 0, "down": 4, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9999, "nines": 4, "percent_text": "99,99 %", "nines_text": "4 nueves" }
+    },
+    {
+      "name": "one nine",
+      "window_s": 1000,
+      "seconds": { "up": 900, "degraded": 0, "down": 100, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9000, "nines": 1, "percent_text": "90,00 %", "nines_text": "1 nueve" }
+    },
+    {
+      "name": "two nines",
+      "window_s": 1000,
+      "seconds": { "up": 990, "degraded": 0, "down": 10, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9900, "nines": 2, "percent_text": "99,00 %", "nines_text": "2 nueves" }
+    },
+    {
+      "name": "three nines on the exact boundary",
+      "window_s": 1000,
+      "seconds": { "up": 999, "degraded": 0, "down": 1, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9990, "nines": 3, "percent_text": "99,90 %", "nines_text": "3 nueves" }
+    },
+    {
+      "name": "just under three nines is two",
+      "window_s": 100000,
+      "seconds": { "up": 99899, "degraded": 0, "down": 101, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9989, "nines": 2, "percent_text": "99,89 %", "nines_text": "2 nueves" }
+    },
+    {
+      "name": "five nines",
+      "window_s": 100000,
+      "seconds": { "up": 99999, "degraded": 0, "down": 1, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9999, "nines": 5, "percent_text": "99,99 %", "nines_text": "5 nueves" }
+    },
+    {
+      "name": "under ninety percent is zero nines",
+      "window_s": 1000,
+      "seconds": { "up": 500, "degraded": 0, "down": 500, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 5000, "nines": 0, "percent_text": "50,00 %", "nines_text": "0 nueves" }
+    },
+    {
+      "name": "all down",
+      "window_s": 1000,
+      "seconds": { "up": 0, "degraded": 0, "down": 1000, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 0, "nines": 0, "percent_text": "0,00 %", "nines_text": "0 nueves" }
+    },
+    {
+      "name": "degraded counts as available",
+      "window_s": 1000,
+      "seconds": { "up": 500, "degraded": 490, "down": 10, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9900, "nines": 2, "percent_text": "99,00 %", "nines_text": "2 nueves" }
+    },
+    {
+      "name": "blocked and unknown leave the denominator and never lower uptime",
+      "window_s": 2000,
+      "seconds": { "up": 999, "degraded": 0, "down": 1, "blocked": 600, "unknown": 400 },
+      "expected": { "status": "ok", "uptime_bp": 9990, "nines": 3, "percent_text": "99,90 %", "nines_text": "3 nueves" }
+    },
+    {
+      "name": "a realistic month with 4 h 15 min down",
+      "window_s": 2592000,
+      "seconds": { "up": 2570000, "degraded": 6700, "down": 15300, "blocked": 0, "unknown": 0 },
+      "expected": { "status": "ok", "uptime_bp": 9940, "nines": 2, "percent_text": "99,40 %", "nines_text": "2 nueves" }
+    }
+  ],
+  "aggregate": [
+    {
+      "name": "equal-weight mean of two services",
+      "window_s": 10000,
+      "services": [
+        { "up": 9998, "degraded": 0, "down": 2, "blocked": 0, "unknown": 0 },
+        { "up": 10000, "degraded": 0, "down": 0, "blocked": 0, "unknown": 0 }
+      ],
+      "expected": { "status": "ok", "uptime_bp": 9999, "nines": 4, "percent_text": "99,99 %", "nines_text": "4 nueves" }
+    },
+    {
+      "name": "a busier service weighs the same as a quiet one",
+      "window_s": 1000,
+      "services": [
+        { "up": 900, "degraded": 0, "down": 100, "blocked": 0, "unknown": 0 },
+        { "up": 1000, "degraded": 0, "down": 0, "blocked": 0, "unknown": 0 }
+      ],
+      "expected": { "status": "ok", "uptime_bp": 9500, "nines": 1, "percent_text": "95,00 %", "nines_text": "1 nueve" }
+    },
+    {
+      "name": "no service with downtime",
+      "window_s": 1000,
+      "services": [
+        { "up": 1000, "degraded": 0, "down": 0, "blocked": 0, "unknown": 0 },
+        { "up": 600, "degraded": 0, "down": 0, "blocked": 400, "unknown": 0 }
+      ],
+      "expected": { "status": "no_downtime", "uptime_bp": 10000, "nines": null, "percent_text": "100,00 %", "nines_text": "sin caídas" }
+    },
+    {
+      "name": "a service with insufficient data is left out of the mean",
+      "window_s": 1000,
+      "services": [
+        { "up": 999, "degraded": 0, "down": 1, "blocked": 0, "unknown": 0 },
+        { "up": 100, "degraded": 0, "down": 100, "blocked": 0, "unknown": 800 }
+      ],
+      "expected": { "status": "ok", "uptime_bp": 9990, "nines": 3, "percent_text": "99,90 %", "nines_text": "3 nueves" }
+    },
+    {
+      "name": "only insufficient services",
+      "window_s": 1000,
+      "services": [
+        { "up": 100, "degraded": 0, "down": 0, "blocked": 0, "unknown": 900 }
+      ],
+      "expected": { "status": "insufficient", "uptime_bp": null, "nines": null, "percent_text": "datos insuficientes", "nines_text": "datos insuficientes" }
+    }
+  ],
+  "coverage": [
+    {
+      "name": "back to back checks cover the window",
+      "start": "2026-11-20T10:00:00Z",
+      "end": "2026-11-20T10:03:00Z",
+      "checks": [
+        { "at": "2026-11-20T10:00:00Z", "outcome": "up", "interval_s": 60 },
+        { "at": "2026-11-20T10:01:00Z", "outcome": "down", "interval_s": 60 },
+        { "at": "2026-11-20T10:02:00Z", "outcome": "up", "interval_s": 60 }
+      ],
+      "expected": { "up": 120, "degraded": 0, "down": 60, "blocked": 0, "unknown": 0 }
+    },
+    {
+      "name": "a check covers at most twice its interval, the rest is a gap",
+      "start": "2026-11-20T10:00:00Z",
+      "end": "2026-11-20T10:06:00Z",
+      "checks": [
+        { "at": "2026-11-20T10:00:00Z", "outcome": "up", "interval_s": 60 },
+        { "at": "2026-11-20T10:05:00Z", "outcome": "degraded", "interval_s": 60 }
+      ],
+      "expected": { "up": 120, "degraded": 60, "down": 0, "blocked": 0, "unknown": 180 }
+    },
+    {
+      "name": "a check before the window covers into it",
+      "start": "2026-11-20T10:01:40Z",
+      "end": "2026-11-20T10:03:20Z",
+      "checks": [
+        { "at": "2026-11-20T10:00:50Z", "outcome": "blocked", "interval_s": 60 }
+      ],
+      "expected": { "up": 0, "degraded": 0, "down": 0, "blocked": 70, "unknown": 30 }
+    },
+    {
+      "name": "no checks at all is one big gap",
+      "start": "2026-11-20T10:00:00Z",
+      "end": "2026-11-20T11:00:00Z",
+      "checks": [],
+      "expected": { "up": 0, "degraded": 0, "down": 0, "blocked": 0, "unknown": 3600 }
+    }
+  ],
+  "durations": [
+    { "seconds": 0, "text": "0 s" },
+    { "seconds": 26, "text": "26 s" },
+    { "seconds": 263, "text": "4 min 23 s" },
+    { "seconds": 2580, "text": "43 min" },
+    { "seconds": 5400, "text": "1 h 30 min" },
+    { "seconds": 15300, "text": "4 h 15 min" },
+    { "seconds": 3600, "text": "1 h" },
+    { "seconds": 46680, "text": "12 h 58 min" },
+    { "seconds": 93780, "text": "26 h 3 min" }
+  ]
+}

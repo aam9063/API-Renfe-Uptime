@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 
-from anden9.domain.classifier import classify, classify_failure, classify_probe_error
+from anden9.domain.classifier import Payload, classify, classify_failure, classify_probe_error
 from anden9.domain.outcome import CheckResult
 from anden9.domain.ports import HttpError, HttpRequest, HttpResponse
 from anden9.probes.base import ProbeContext
@@ -21,15 +21,17 @@ EXPECTED_STATUS = 200
 REQUIRED_KEY = "arch"
 
 
-def is_valid_payload(response: HttpResponse) -> bool:
+def judge_payload(response: HttpResponse) -> Payload:
     """The template endpoint answers 200 with a JSON object holding ``arch``."""
     if response.status != EXPECTED_STATUS:
-        return False
+        return Payload.INVALID
     try:
         payload = json.loads(response.body)
     except json.JSONDecodeError:
-        return False
-    return isinstance(payload, dict) and REQUIRED_KEY in payload
+        return Payload.INVALID
+    if isinstance(payload, dict) and REQUIRED_KEY in payload:
+        return Payload.VALID
+    return Payload.INVALID
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,4 +50,4 @@ class TemplateProbe:
             return classify_failure(error, context.spec)
         except Exception:
             return classify_probe_error(context.spec)
-        return classify(response, context.spec, payload_valid=is_valid_payload(response))
+        return classify(response, context.spec, payload=judge_payload(response))
