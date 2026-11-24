@@ -26,7 +26,7 @@ acceptance check has been observed.
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
 | M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | built, awaiting review |
 | M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
-| M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
+| M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | built, awaiting review |
 
 M0 is [pull request #1](https://github.com/aam9063/API-Renfe-Uptime/pull/1) against `dev`, with
 the first CI run green on all three jobs: `make check` on Ubuntu, the same runner on Windows, and
@@ -72,6 +72,12 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
   closed days up before pruning the raw checks. A deterministic seed gives a week of measurements.
 - **Store** (`prober/src/anden9/adapters/store_supabase.py`): one PostgREST call per write, with the
   service role key read only by `config.py`, which keeps it out of every representation.
+- **Deployment and operation** (`prober/Dockerfile`, `deploy/`, `web/netlify.toml`,
+  `.github/workflows/heartbeat.yml`): a non-root image with the dependencies in their own layer, a
+  compose file with log rotation, a systemd unit that keeps the container alive, the Netlify
+  configuration with the SPA redirect, and a scheduled job that opens an issue when the heartbeat
+  goes silent for more than ten minutes. The runbook covers start, stop, update, rollback and key
+  rotation.
 
 Still missing on purpose: the four screens.
 

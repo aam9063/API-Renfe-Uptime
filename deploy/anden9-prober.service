@@ -1,0 +1,19 @@
+[Unit]
+Description=Anden 9 prober (unofficial Renfe API uptime)
+Documentation=https://github.com/aam9063/API-Renfe-Uptime/blob/dev/docs/runbook.md
+After=network-online.target docker.service
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/anden9
+ExecStart=/usr/bin/docker compose --file /opt/anden9/deploy/docker-compose.yml up --no-build
+ExecStop=/usr/bin/docker compose --file /opt/anden9/deploy/docker-compose.yml down
+Restart=always
+RestartSec=15
+TimeoutStopSec=30
+
+# The container does the real work; this unit only keeps it alive.
+[Install]
+WantedBy=multi-user.target

@@ -13,7 +13,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 EM_DASH = "\u2014"
-IGNORED_DIRECTORIES = frozenset({".git", "node_modules", ".venv", "dist", ".evidence"})
+IGNORED_DIRECTORIES = frozenset(
+    {".git", "node_modules", ".venv", "dist", ".evidence", ".worktrees"}
+)
 SECRET_SUFFIXES = (".pem", ".key")
 SECRET_PREFIXES = (".env",)
 GITIGNORE_REQUIRED_ENTRIES = (".env", "*.pem", "*.key")
@@ -154,6 +156,21 @@ def check_brand_assets(report: Report, files: Sequence[Path]) -> None:
     report.ok("no brand assets", "no Renfe logo or brand asset in the repository")
 
 
+def check_bundle(report: Report) -> None:
+    """A built web bundle must never carry the service role key."""
+    bundle = ROOT / "web" / "dist"
+    if not bundle.exists():
+        report.ok("web bundle", "no build to inspect yet")
+        return
+    for path in _walk(bundle):
+        if path.suffix not in {".js", ".html", ".css"}:
+            continue
+        if "service_role" in path.read_text(encoding="utf-8", errors="ignore"):
+            report.fail("web bundle", f"service_role found in {path.name}")
+            return
+    report.ok("web bundle", "the built bundle carries no service_role")
+
+
 def main() -> int:
     report = Report()
     files = tracked_files()
@@ -162,6 +179,7 @@ def main() -> int:
     check_no_data_dumps(report, files)
     check_copy(report)
     check_brand_assets(report, files)
+    check_bundle(report)
     if report.failures:
         sys.stdout.write(f"\n{len(report.failures)} hygiene check(s) failed\n")
         return 1
