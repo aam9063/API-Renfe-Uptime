@@ -121,7 +121,8 @@ green check and a fresh heartbeat, then remove the old value from the Supabase d
 
 ## When Renfe changes something
 
-1. Compare the live response with the recorded fixture in `prober/tests/fixtures/http/`.
+1. Compare the live response with the canned answer the probe test uses in
+   `prober/tests/test_probes.py`.
 2. Read recent commits of `renfe-cli` for the affected endpoint.
 3. Report the observed difference before touching the parser, and never relax validation just to
    make a probe green.
