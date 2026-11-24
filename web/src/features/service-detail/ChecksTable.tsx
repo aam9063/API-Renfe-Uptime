@@ -14,7 +14,7 @@ export function ChecksTable({ rows }: { rows: readonly RecentCheckRow[] }) {
       {rows.length === 0 ? (
         <p className="m-0 text-[14px] text-muted">Aún no hay comprobaciones registradas.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Últimas comprobaciones">
           <table className="w-full min-w-[420px] border-collapse text-[14px]">
             <thead>
               <tr className="text-left text-[12px] text-muted">

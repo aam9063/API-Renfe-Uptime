@@ -4,7 +4,12 @@ import { formatInterval } from '../../lib/format'
 
 export function ProbeCatalog({ probes }: { probes: readonly ProbeRow[] }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
+    <div
+      className="overflow-x-auto rounded-2xl border border-line bg-surface"
+      tabIndex={0}
+      role="region"
+      aria-label="Catálogo de sondas"
+    >
       <table className="w-full min-w-[560px] border-collapse text-[14px]">
         <thead>
           <tr className="text-left text-[12px] text-muted">
