@@ -26,6 +26,10 @@ export default tseslint.config(
           ],
         },
       ],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
   {
@@ -48,6 +52,12 @@ export default tseslint.config(
         'error',
         { ignore: [0, 1], ignoreArrayIndexes: true, ignoreDefaultValues: true },
       ],
+    },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'no-magic-numbers': 'off',
     },
   },
 )

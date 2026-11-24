@@ -24,9 +24,9 @@ acceptance check has been observed.
 | M0 | Scaffolding and constraints: monorepo, check runner, canonical templates, docs, guards, CI | built, awaiting review |
 | M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
-| M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | pending |
-| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
-| M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
+| M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | built, awaiting review |
+| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | built, awaiting review |
+| M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | built, awaiting review |
 
 M0 is [pull request #1](https://github.com/aam9063/API-Renfe-Uptime/pull/1) against `dev`, with
 the first CI run green on all three jobs: `make check` on Ubuntu, the same runner on Windows, and
@@ -66,7 +66,25 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
   control endpoint and pauses a probe on `Retry-After`, and a CLI with `probe once`, `run` and
   `logs`.
 
-Still missing on purpose: migrations, views, the store adapter, and the four screens.
+- **Database** (`supabase/migrations`): the schema of the brief plus daily rollups, the formula as
+  SQL functions (coverage capped at twice the interval, exact integer nines, truncation, insufficient
+  windows), the eight public views, RLS where `anon` reads views only, and retention that rolls the
+  closed days up before pruning the raw checks. A deterministic seed gives a week of measurements.
+- **Store** (`prober/src/anden9/adapters/store_supabase.py`): one PostgREST call per write, with the
+  service role key read only by `config.py`, which keeps it out of every representation.
+- **Deployment and operation** (`prober/Dockerfile`, `deploy/`, `web/netlify.toml`,
+  `.github/workflows/heartbeat.yml`): a non-root image with the dependencies in their own layer, a
+  compose file with log rotation, a systemd unit that keeps the container alive, the Netlify
+  configuration with the SPA redirect, and a scheduled job that opens an issue when the heartbeat
+  goes silent for more than ten minutes. The runbook covers start, stop, update, rollback and key
+  rotation.
+- **Screens** (`web/src`): the four screens of the design at 1440 and 390, a shell with the notice on
+  every route, TanStack Query hooks in `src/data` that read only the views, `format.ts` pinned by the
+  shared contract cases, and loading, error and "sin datos" states that never invent a number.
+  Playwright walks the four routes, runs axe and writes the evidence captures.
+
+Every milestone is built. What is left is the review and merge of these pull requests, then the
+days of real data that recalibrate the degraded thresholds.
 
 ## How measurement works
 

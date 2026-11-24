@@ -19,6 +19,7 @@ from anden9.probes.www_search import WwwSearchProbe
 
 def all_probes() -> tuple[Probe, ...]:
     return (
+        ControlProbe(),
         NsvConfigProbe(),
         NsvTokenProbe(),
         NsvStationsProbe(),
@@ -37,4 +38,5 @@ def probes_for(specs: Sequence[ProbeSpec]) -> Mapping[str, Probe]:
 
 
 def control_probe() -> Probe:
+    """A fresh instance: the control call keeps no state between runs."""
     return ControlProbe()

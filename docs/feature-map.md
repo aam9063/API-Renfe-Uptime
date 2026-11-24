@@ -12,11 +12,11 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Sub-features: aggregate card, window tabs (24h, 7d, 30d, 90d), nines scale panel, service list with 90 day bars, incidents link.
 - How to reach it in the UI: `/`.
 - Keyboard shortcuts: none yet.
-- Selectors for programmatic control: none yet.
+- Selectors for programmatic control: no test ids; the e2e run drives it by role and link text.
 - Code location: `web/src/features/status-overview/`.
 - Backend/API involved: views `v_uptime_windows`, `v_status_now`, `v_daily_90`, `v_latency_24h`.
 - Known pitfalls: the aggregate is the unweighted mean of active services; a service in `unknown` is excluded, never counted as down.
-- Status: pending (M4). Design: `design/Main.dc.html`.
+- Status: built (M4). Design: `design/Main.dc.html`.
 
 ## service-detail
 
@@ -24,11 +24,11 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Sub-features: window cards, p50 and p95 latency, daily strip, recent checks table, retirement notice for `legacy-shop`.
 - How to reach it in the UI: `/servicio/:id`, from a row of the home list.
 - Keyboard shortcuts: none yet.
-- Selectors for programmatic control: none yet.
+- Selectors for programmatic control: no test ids; the e2e run drives it by role and link text.
 - Code location: `web/src/features/service-detail/`.
 - Backend/API involved: `v_uptime_windows`, `v_latency_24h`, `v_daily_90`, `v_recent_checks`, `v_incidents`.
 - Known pitfalls: a retired probe is shown as "retirada", never as down.
-- Status: pending (M4). Design: `design/Servicio.dc.html`.
+- Status: built (M4). Design: `design/Servicio.dc.html`.
 
 ## methodology
 
@@ -36,11 +36,11 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Sub-features: state table, formula, catalog table read from `probes`, honesty section (region, user agent, no bypass).
 - How to reach it in the UI: `/metodologia`.
 - Keyboard shortcuts: none yet.
-- Selectors for programmatic control: none yet.
+- Selectors for programmatic control: no test ids; the e2e run drives it by role and link text.
 - Code location: `web/src/features/methodology/`.
 - Backend/API involved: `probes` view exposing the catalog; no hand written catalog in the page.
 - Known pitfalls: the catalog is data, never copy pasted HTML.
-- Status: pending (M4). Design: `design/Metodologia.dc.html`.
+- Status: built (M4). Design: `design/Metodologia.dc.html`.
 
 ## incidents
 
@@ -48,11 +48,11 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - Sub-features: incident list, anchor `#incidentes` from the home page.
 - How to reach it in the UI: home page section, anchor `#incidentes`.
 - Keyboard shortcuts: none yet.
-- Selectors for programmatic control: none yet.
+- Selectors for programmatic control: no test ids; the e2e run drives it by role and link text.
 - Code location: `web/src/features/incidents/`.
 - Backend/API involved: view `v_incidents`.
 - Known pitfalls: a `blocked` stretch is shown apart and never counted as downtime.
-- Status: pending (M4).
+- Status: built (M4).
 
 ## probes
 
@@ -109,10 +109,10 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - How to reach it in the UI: indirectly.
 - Keyboard shortcuts: not applicable.
 - Selectors for programmatic control: not applicable.
-- Code location: `prober/src/anden9/adapters/store_supabase.py` (pending).
+- Code location: `prober/src/anden9/adapters/store_supabase.py`.
 - Backend/API involved: `checks`, `incidents`, `heartbeat` tables.
 - Known pitfalls: the `service_role` key is read only by `config.py` and never leaves the prober environment.
-- Status: pending (M3).
+- Status: built (M3).
 
 ## db-views
 
@@ -121,7 +121,7 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - How to reach it in the UI: every page.
 - Keyboard shortcuts: not applicable.
 - Selectors for programmatic control: not applicable.
-- Code location: `supabase/migrations/` (pending).
+- Code location: `supabase/migrations/`, contract in `docs/views.md`.
 - Backend/API involved: Postgres, RLS for `anon`.
 - Known pitfalls: the formula lives here and only here; `contracts/uptime_cases.json` runs against it.
-- Status: pending (M3).
+- Status: built (M3).

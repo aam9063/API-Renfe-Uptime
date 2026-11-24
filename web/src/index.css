@@ -18,7 +18,18 @@
   --color-degraded: #e0a03a;
   --color-down: #c8362f;
   --color-blocked: #7c8696;
+  --color-blocked-soft: #c5cad3;
   --color-nodata: #dcddd8;
+
+  --color-up-surface: #e3f3e9;
+  --color-up-ink: #155c36;
+  --color-degraded-surface: #fff1d6;
+  --color-degraded-ink: #6b4200;
+  --color-down-surface: #fbe4e2;
+  --color-down-ink: #8e1f19;
+  --color-blocked-surface: #e6e9ee;
+  --color-blocked-ink: #3b4452;
+  --color-neutral-surface: #edeeea;
 
   --color-link: #2446e0;
   --color-link-dark: #9db1ff;
@@ -28,6 +39,17 @@
   --color-panel: #15171c;
   --color-panel-line: #2e323b;
   --color-panel-muted: #b9bec8;
+
+  --color-line-strong: #c9cbc4;
+}
+
+/* A blocked day is a hatch: it is shown, but it never counts as downtime. */
+.bg-blocked-stripes {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-blocked) 0 2px,
+    var(--color-blocked-soft) 2px 4px
+  );
 }
 
 body {
