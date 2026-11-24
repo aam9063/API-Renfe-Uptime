@@ -6,7 +6,7 @@ import type { Daily90Row, ProbeRow, StatusNowRow, UptimeWindowRow } from '../../
 
 import { AggregateCard } from './AggregateCard'
 import { buildOverview } from './OverviewData'
-import { DailyStrip } from './DailyStrip'
+import { DailyStrip } from '../../ui/DailyStrip'
 import { ServiceGroups } from './ServiceGroups'
 import { StatusOverview } from '.'
 

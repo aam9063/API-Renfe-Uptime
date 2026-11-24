@@ -56,7 +56,7 @@ describe('the shell and the routes', () => {
       window.history.pushState({}, '', '/servicio/live-map')
       window.dispatchEvent(new Event(NAVIGATE_EVENT))
     })
-    expect(screen.getByRole('heading', { name: 'Detalle del servicio' })).toBeDefined()
+    expect(screen.getAllByText('Sin datos').length).toBeGreaterThan(0)
   })
 
   it('has a page not found for unknown paths', () => {

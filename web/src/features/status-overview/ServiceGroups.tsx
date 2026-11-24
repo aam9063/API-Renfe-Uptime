@@ -3,7 +3,7 @@ import { DESKTOP_STRIP_DAYS, MOBILE_STRIP_DAYS } from '../../lib/windows'
 import { Link } from '../../ui/router'
 import { legendChip } from '../../ui/outcome'
 import { ninesText, formatRelative } from '../../lib/format'
-import { DailyStrip } from './DailyStrip'
+import { DailyStrip } from '../../ui/DailyStrip'
 
 const LEGEND_OUTCOMES = ['up', 'degraded', 'down', 'blocked', 'unknown'] as const
 

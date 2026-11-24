@@ -1,6 +1,6 @@
-import type { Daily90Row } from '../../data/hooks'
+import type { Daily90Row } from '../data/hooks'
 
-import { dailyBarClass } from '../../ui/outcome'
+import { dailyBarClass } from './outcome'
 
 // The day strip: one bar per day, oldest on the left. Days the view has no
 // answer for read as "sin datos".

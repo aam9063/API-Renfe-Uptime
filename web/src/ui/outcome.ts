@@ -86,3 +86,16 @@ export function legendChip(outcome: string): OutcomeStyle {
       return { className: 'bg-nodata', label: 'Sin datos' }
   }
 }
+
+export function statusDotClass(outcome: string): string {
+  switch (outcome) {
+    case 'up':
+      return 'bg-up'
+    case 'degraded':
+      return 'bg-degraded'
+    case 'down':
+      return 'bg-down'
+    default:
+      return 'bg-nodata'
+  }
+}
