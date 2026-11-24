@@ -14,18 +14,22 @@ from collections.abc import Sequence
 
 from anden9.adapters.clock import SystemClock
 from anden9.adapters.http_httpx import HttpxTransport
+from anden9.adapters.store_supabase import SupabaseStore
+from anden9.config import Config, ConfigError
 from anden9.domain.classifier import apply_control_gate
 from anden9.domain.outcome import CheckResult, Outcome
 from anden9.domain.spec import ProbeSpec
+from anden9.domain.store import Store
 from anden9.probes.base import Probe, ProbeContext
 from anden9.probes.catalog import CATALOG, CONTROL_ENDPOINT, dev_catalog, spec_by_id
 from anden9.probes.registry import control_probe, probes_for
 from anden9.probes.session import SessionState
-from anden9.scheduler import Scheduler
+from anden9.scheduler import DEFAULT_REGION, Scheduler
 from anden9.version import __version__
 
 EXIT_OK = 0
 EXIT_USAGE = 2
+NEWLINE = chr(10)
 LOG_PREFIX = "  "
 
 
@@ -104,18 +108,34 @@ async def _observe(
     return apply_control_gate(result, control_ok=control.outcome is Outcome.UP)
 
 
+def build_store() -> tuple[Store | None, str]:
+    """The store is optional: without its two variables the loop measures and writes nothing."""
+    try:
+        config = Config.from_environ()
+    except ConfigError as error:
+        sys.stderr.write(f"no database configured ({error}), measuring without writing" + NEWLINE)
+        return None, DEFAULT_REGION
+    store = SupabaseStore(url=config.supabase_url, service_role_key=config.service_role_key)
+    return store, config.region
+
+
 async def _run_scheduler(specs: Sequence[ProbeSpec]) -> int:
     transport = HttpxTransport()
+    store, region = build_store()
     scheduler = Scheduler(
         http=transport,
         clock=SystemClock(),
         specs=specs,
         emit=lambda spec, result: write_result(spec, result, verbose=False),
+        store=store,
+        region=region,
     )
     try:
         await scheduler.run_forever()
     finally:
         await transport.aclose()
+        if isinstance(store, SupabaseStore):
+            await store.aclose()
     return EXIT_OK
 
 
