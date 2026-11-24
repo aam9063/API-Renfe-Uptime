@@ -28,6 +28,11 @@ acceptance check has been observed.
 | M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
 | M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
 
+M0 is [pull request #1](https://github.com/aam9063/API-Renfe-Uptime/pull/1) against `dev`, with
+the first CI run green on all three jobs: `make check` on Ubuntu, the same runner on Windows, and
+Playwright. The native review refused that candidate for size (`lens_context_budget_exceeded`,
+64 files and 6640 changed lines), so the pull request carries no review outcome yet.
+
 ## What is in place today
 
 - **Prober** (`prober/`): `uv` project, Python 3.14, `mypy --strict`, ruff with magic number and
