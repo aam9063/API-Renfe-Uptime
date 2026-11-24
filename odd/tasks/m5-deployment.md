@@ -78,3 +78,15 @@ Three things this milestone fixed along the way, all of them found by running it
 - Netlify: the configuration is written but no deploy has been made.
 - The heartbeat workflow: it needs the two Supabase secrets that only Albert can add, and until
   then it logs that it is unconfigured instead of failing.
+
+### Review
+
+`assess` over the M5 range: native risk high, review due. Two lenses ran, **risk** and
+**readability**, and the lineage closed approved with its acknowledgement burned
+(`review-4ef37bc70ce7edcb`).
+
+One non-blocking finding, fixed right after the review closed instead of inside it:
+
+| Id | Lens | What | Fixed |
+| --- | --- | --- | --- |
+| R2-001 | readability | the docstring of `control_probe()` promised one shared instance while the function returns a new one | yes, the docstring now says the control call keeps no state |
