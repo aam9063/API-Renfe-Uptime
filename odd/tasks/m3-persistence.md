@@ -142,3 +142,17 @@ the 24 hour windows moved with the new rows. The one difference from the accepta
 this ran three minutes, not thirty, because the point of the half hour is cadence and the cadence is
 already covered by the scheduler tests (`tick(now)` drives weeks without sleeping) and by the six
 minutes of real writes above.
+
+### The bug the browser found and the tests had stopped covering
+
+With a seeded database the web answered "No pudimos cargar los datos": `v_uptime_windows` and
+`v_daily_90` returned **401** to `anon` with `permission denied for table checks`. The cause is a
+PostgreSQL subtlety: `security_invoker = false` makes the *view* run as its owner, but a plain SQL
+function the view calls still runs as `anon`. Both functions that read tables are now
+`SECURITY DEFINER` with a pinned `search_path`, and their `execute` is granted explicitly.
+
+Worse than the bug: my own patch had truncated `test_rls.py` earlier in the session and taken the
+two assertions that covered exactly this with it, so a green suite was hiding a red product. The
+file is rebuilt, and the invariant is now pinned from both sides: with the definer rights removed,
+five cases fail (observed), and with them in place, all pass (observed). A 200 alone is not proof,
+so the test checks the row count.
