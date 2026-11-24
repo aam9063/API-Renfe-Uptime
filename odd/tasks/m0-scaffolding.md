@@ -170,3 +170,11 @@ the nine work-unit commits of M0 from the table above, left `main` on the M0 tip
 delivery, and is parked unverified on `feat/m1-domain` in commit `5298401` so nothing is lost.
 `main` was moved back to the base (`d09b8ee`) by hand, no published history was rewritten because
 the remote was empty. M1 restarts from its own branch with its own document and its own checks.
+
+### Follow-ups after M0
+
+- The CI workflow pins `actions/checkout@v4`, `actions/setup-node@v4`, `actions/setup-python@v5`,
+  `astral-sh/setup-uv@v6` and `pnpm/action-setup@v4`. GitHub now forces them onto Node 24 and
+  prints a deprecation notice on every run (observed in run 45432566154). The current majors are
+  v7, v7, v7, v10 and v6. It is a one-line-per-action change with the same visible result, so it
+  belongs in its own `chore(ci)` pull request instead of adding noise to the M0 review.
