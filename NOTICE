@@ -1,0 +1,13 @@
+Andén 9
+======
+
+This project is unofficial and has no relationship with Renfe Operadora.
+
+Endpoint knowledge (URLs, headers, response shapes and observed behaviour of the
+Renfe APIs) comes from renfe-cli by Luis Gonzalez:
+
+  https://github.com/luisgonzaleznf/renfe-cli
+  MIT License, Copyright (c) Luis Gonzalez
+
+No Renfe logo, brand asset or trademark is used. Any logic ported from
+renfe-cli keeps its MIT license and attribution here.
