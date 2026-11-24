@@ -78,3 +78,29 @@ What that run proves and what it does not:
   not been accepted yet; 4 is answered at transport level, both requests answer 200; 5 needs a
   night of observation; 6 needs a second run to show the 304; 9 was not exercised because nothing
   failed.
+
+### T6 evidence, second run, after the Bearer token
+
+Same command, a few minutes later:
+
+```
+nsv-config   up       ok          200  151 ms
+nsv-token    up       ok          200  216 ms
+nsv-stations up       ok          200   61 ms
+nsv-search   unknown  probe_error 400  168 ms
+legacy-shop  up       ok          200   91 ms
+live-map     up       ok          200  135 ms
+gtfs-avld    up       ok          200  557 ms
+www-search   up       ok          200   70 ms
+```
+
+`nsv-search` moved from 401 to 400: the Bearer token is now accepted and what is still wrong is the
+body. That is uncertainty 3 of the brief, narrowed to one thing, and it is still published as
+`unknown` instead of an invented outage while it is open.
+
+Two notes on what these runs cannot show:
+
+- The `ETag` of `gtfs-avld` never appears as a 304 in a one-shot run, because each process starts
+  with an empty session. The 304 shows up on the second run inside the scheduler, which is the shape
+  the unit tests already pin.
+- The control endpoint never runs in a one-shot pass unless something goes `down`, by design.

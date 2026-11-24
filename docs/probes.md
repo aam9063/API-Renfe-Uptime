@@ -45,7 +45,7 @@ with `Cache-Control: max-age=30`, so one request per minute already costs nothin
 | `nsv-config` | 200 | the API key is published where the brief says |
 | `nsv-token` | 200, JWT | the key plus `channel: VLP` is enough |
 | `nsv-stations` | 200, non-empty list | the anonymous session headers we send work |
-| `nsv-search` | 401 | the API key alone is not enough: it needs the Bearer token too |
+| `nsv-search` | 401, then 400 with the Bearer token | the token is accepted and the request body is still wrong (uncertainty 3) |
 | `legacy-shop` | 200 and 200 | the search page and the DWR call answer |
 | `live-map` | 200 with units | the shape of the brief holds |
 | `gtfs-avld` | 200, zip | no `ETag` seen yet on the first call |
