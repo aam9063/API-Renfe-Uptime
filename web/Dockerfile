@@ -4,6 +4,9 @@
 #   docker build -t anden9-web \
 #     --build-arg VITE_SUPABASE_URL=https://project.supabase.co \
 #     --build-arg VITE_SUPABASE_ANON_KEY=... web
+#
+# It listens on 3000, which is the container port most platforms ask for, and honours a PORT
+# variable when the platform injects its own.
 FROM node:24-alpine AS build
 
 WORKDIR /app
@@ -32,8 +35,8 @@ FROM nginxinc/nginx-unprivileged:1.29-alpine AS runtime
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=3000
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --quiet --output-document=- http://127.0.0.1:${PORT}/healthz || exit 1

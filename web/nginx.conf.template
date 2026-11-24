@@ -1,5 +1,5 @@
 server {
-    # A platform may inject PORT; 8080 is the default of this image.
+    # A platform may inject PORT; 3000 is the default of this image.
     listen ${PORT};
     server_name _;
 
