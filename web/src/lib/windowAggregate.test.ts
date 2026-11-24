@@ -21,6 +21,32 @@ function windowRow(overrides: Partial<UptimeWindowRow>): UptimeWindowRow {
   }
 }
 
+describe('aggregateWindows nines', () => {
+  it('gives three nines for an exact 1000x ratio, not two', () => {
+    const rows = [
+      windowRow({ probe_id: 'a', denominator_seconds: 1000000, down_seconds: 1000, nines: 3 }),
+    ]
+
+    expect(aggregateWindows(rows, '30d').nines).toBe(3)
+  })
+
+  it('gives five nines for an exact 100000x ratio', () => {
+    const rows = [
+      windowRow({ probe_id: 'a', denominator_seconds: 100000, down_seconds: 1, nines: 5 }),
+    ]
+
+    expect(aggregateWindows(rows, '30d').nines).toBe(5)
+  })
+
+  it('gives no nine below a ten to one ratio', () => {
+    const rows = [
+      windowRow({ probe_id: 'a', denominator_seconds: 2000, down_seconds: 1000 }),
+    ]
+
+    expect(aggregateWindows(rows, '30d').nines).toBe(0)
+  })
+})
+
 describe('aggregateWindows', () => {
   it('computes the unweighted mean of the exact fractions', () => {
     const aggregate = aggregateWindows(

@@ -12,10 +12,22 @@ export type WindowAggregate = {
   downSeconds: number
 }
 
-function log10Of(value: bigint): number {
-  const digits = value.toString()
-  const head = digits.slice(0, 17)
-  return digits.length - head.length + Math.log10(Number(head))
+const MAX_NINES = 12n
+
+// Exact integer nines: the largest n with 10^n * down <= denominator, the same
+// rule as the SQL views and the Python domain. A float log10 lands on
+// 2.9999999 for an exact 1000x ratio and publishes one nine too few.
+function ninesOf(denominator: bigint, down: bigint): number | null {
+  if (down <= 0n) {
+    return null
+  }
+  let nines = 0n
+  let scale = 10n
+  while (nines < MAX_NINES && scale * down <= denominator) {
+    nines += 1n
+    scale *= 10n
+  }
+  return Number(nines)
 }
 
 function gcd(a: bigint, b: bigint): bigint {
@@ -63,10 +75,7 @@ export function aggregateWindows(
       divisor === 0n
         ? null
         : `${availableSum / divisor}/${meanDenominator / divisor}`,
-    nines:
-      downSum === 0n
-        ? null
-        : Math.max(0, Math.floor(log10Of(meanDenominator) - log10Of(downSum))),
+    nines: ninesOf(meanDenominator, downSum),
     downSeconds,
   }
 }
