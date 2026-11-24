@@ -46,6 +46,25 @@ class HttpPort(Protocol):
     async def send(self, request: HttpRequest) -> HttpResponse: ...
 
 
+RETRY_AFTER_HEADER = "retry-after"
+MAX_RETRY_AFTER_S = 3600
+
+
+def retry_after_seconds(headers: Mapping[str, str]) -> int | None:
+    """`Retry-After` in whole seconds, capped at an hour, or `None` when absent or unreadable."""
+    raw = header_value(headers, RETRY_AFTER_HEADER)
+    if raw is None or not raw.isdigit():
+        return None
+    return min(int(raw), MAX_RETRY_AFTER_S)
+
+
+def header_value(headers: Mapping[str, str], name: str) -> str | None:
+    for header_name, value in headers.items():
+        if header_name.lower() == name:
+            return value.strip()
+    return None
+
+
 class Clock(Protocol):
     """The only place time comes from; faked in tests."""
 
