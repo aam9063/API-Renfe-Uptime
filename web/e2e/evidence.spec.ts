@@ -13,11 +13,11 @@ test('evidence captures of the three screens', async ({ page }, testInfo) => {
     fullPage: true,
   })
 
+  await page.goto('/servicio/live-map')
   if (DB_CONFIGURED) {
-    await page.getByRole('link', { name: /^Mapa en vivo/ }).first().click()
+    await expect(page.getByRole('heading', { name: /Mapa en vivo/ }).first()).toBeVisible()
   } else {
-    await page.goto('/servicio/live-map')
-    await expect(page.getByText('Sin datos').first()).toBeVisible()
+    await expect(page.getByText(/Sin datos/).first()).toBeVisible()
   }
   await page.screenshot({
     path: `.evidence/${testInfo.project.name}/service.png`,
