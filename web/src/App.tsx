@@ -1,28 +1,50 @@
-import { OfficialNotice } from './ui/OfficialNotice'
+import { Methodology } from './features/methodology'
+import { ServiceDetail } from './features/service-detail'
+import { StatusOverview } from './features/status-overview'
+import { Shell } from './ui/Shell'
+import { Link, useRouteLocation } from './ui/router'
+
+const ROUTE_TITLES: ReadonlyArray<[RegExp, string]> = [
+  [/^\/servicio\/[^/]+$/, 'Nueves, detalle de servicio'],
+  [/^\/metodologia$/, 'Nueves, metodología'],
+  [/^\/$/, 'Nueves, inicio'],
+]
+
+function routeTitle(path: string): string {
+  for (const [pattern, title] of ROUTE_TITLES) {
+    if (pattern.test(path)) {
+      return title
+    }
+  }
+  return 'Nueves, página no encontrada'
+}
 
 export function App() {
+  const { path } = useRouteLocation()
+  const detailMatch = /^\/servicio\/([^/]+)$/.exec(path)
+  document.title = routeTitle(path)
+
   return (
-    <div className="min-h-screen bg-canvas text-ink">
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-4 px-8 py-4">
-          <span className="flex items-center gap-2.5">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-ink font-mono text-base font-semibold text-surface">
-              A9
-            </span>
-            <span className="font-display text-[22px] font-bold">Andén 9</span>
-          </span>
-          <OfficialNotice />
-        </div>
-      </header>
-      <main className="mx-auto flex max-w-[1200px] flex-col gap-6 px-8 py-10">
-        <h1 className="font-display text-[28px] font-bold">
-          Andamio listo, las pantallas llegan en M4
-        </h1>
-        <p className="max-w-[640px] text-[15px] leading-relaxed text-ink-soft">
-          Este repositorio mide el uptime de las APIs de Renfe con la sonda y publica los
-          agregados desde Supabase. La web solo formatea.
-        </p>
-      </main>
-    </div>
+    <Shell>
+      {path === '/' && <StatusOverview />}
+      {path === '/metodologia' && <Methodology />}
+      {detailMatch !== null && detailMatch[1] !== undefined && (
+        <ServiceDetail probeId={decodeURIComponent(detailMatch[1])} />
+      )}
+      {path !== '/' && path !== '/metodologia' && detailMatch === null && <NotFound />}
+    </Shell>
+  )
+}
+
+function NotFound() {
+  return (
+    <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-8">
+      <h1 className="m-0 font-display text-[28px] font-bold">Página no encontrada</h1>
+      <p className="m-0 text-[15px] leading-relaxed text-ink-soft">
+        La página que buscas no existe. Vuelve a{' '}
+        <Link to="/" className="text-link underline hover:text-ink">Estado</Link> o consulta la{' '}
+        <Link to="/metodologia" className="text-link underline hover:text-ink">metodología</Link>.
+      </p>
+    </section>
   )
 }

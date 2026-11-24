@@ -15,7 +15,9 @@ export default defineConfig({
   webServer: {
     command: 'pnpm build && pnpm preview --port 4319 --strictPort --host 127.0.0.1',
     url: PREVIEW_URL,
-    reuseExistingServer: true,
+    // The build bakes VITE_SUPABASE_*: reusing a server would serve a build from another
+    // configuration, which is how a run with a database once produced five mystery 401s.
+    reuseExistingServer: false,
     timeout: 180_000,
   },
   projects: [
@@ -33,6 +35,11 @@ export default defineConfig({
       name: 'evidence',
       testMatch: /evidence/,
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: 'evidence-mobile',
+      testMatch: /evidence/,
+      use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
     },
   ],
 })

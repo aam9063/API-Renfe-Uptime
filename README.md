@@ -25,7 +25,7 @@ acceptance check has been observed.
 | M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
 | M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | built, awaiting review |
-| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
+| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | built, awaiting review |
 | M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | built, awaiting review |
 
 M0 is [pull request #1](https://github.com/aam9063/API-Renfe-Uptime/pull/1) against `dev`, with
@@ -78,8 +78,13 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
   configuration with the SPA redirect, and a scheduled job that opens an issue when the heartbeat
   goes silent for more than ten minutes. The runbook covers start, stop, update, rollback and key
   rotation.
+- **Screens** (`web/src`): the four screens of the design at 1440 and 390, a shell with the notice on
+  every route, TanStack Query hooks in `src/data` that read only the views, `format.ts` pinned by the
+  shared contract cases, and loading, error and "sin datos" states that never invent a number.
+  Playwright walks the four routes, runs axe and writes the evidence captures.
 
-Still missing on purpose: the four screens.
+Every milestone is built. What is left is the review and merge of these pull requests, then the
+days of real data that recalibrate the degraded thresholds.
 
 ## How measurement works
 

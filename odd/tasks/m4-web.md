@@ -86,3 +86,48 @@ vitest test must run the shared formatting cases through `web/src/lib/format.ts`
   the comma and chooses the label. The shared contract cases keep that honest.
 - **A missing configuration is a state, not a crash.** Without Supabase variables the app renders
   the shell and "sin datos", which is what a static preview and the e2e run need.
+
+## Evidence
+
+### What was built
+
+Ten work units, one per task above, then five fixes that only appeared by running it.
+
+### Checks
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | clean |
+| `pnpm lint` | clean |
+| `pnpm test` | 65 tests, 11 files |
+| `pnpm arch` | 38 modules, no violations |
+| `pnpm e2e` | 12 passed at 1440 and 390 |
+| `pnpm e2e:evidence` | screenshots in `web/.evidence/{evidence,evidence-mobile}/` |
+
+### Against the seeded database
+
+Repeated with the M3 stack running and 18 824 seeded checks. The home aggregates to **99,72 %** and
+**2 nines**, the service detail loads `live-map` with its windows and recent checks, the methodology
+catalog comes from `v_probes`, and the incidents list shows the three seeded kinds. axe stays clean
+with real content, which is the only version of that test worth having.
+
+### Five defects found by running it
+
+1. **Float nines in the aggregate.** `Math.floor(log10(a) - log10(b))` lands on 2,9999 for an exact
+   1000x ratio and publishes one nine too few. Replaced by the integer rule the SQL views use, with
+   three boundary cases pinned.
+2. **The wordmark said the old product name** (`.9 nueves`) because it came from the design export
+   written before the rename. Now Andén 9 with the A9 mark.
+3. **`scrollable-region-focusable`** from axe on the service detail once it had rows: two tables
+   scrolled sideways and could not be reached with the keyboard. Both take focus and have a role and
+   a name.
+4. **The e2e reused a preview server.** The build bakes `VITE_SUPABASE_*`, so a run with a database
+   served a build from a run without one and produced five mystery 401s. Reuse is off.
+5. **The evidence spec asserted "sin datos" even with a database configured.** It now branches on
+   the configuration and asserts the real heading.
+
+### Not verified
+
+- The Supabase cloud project and Netlify, which belong to Albert.
+- Lighthouse on the built site: the brief asks for 90 on mobile and that check is still pending.
+- The 90 day strip against 90 days of real history: the seed has 7.
