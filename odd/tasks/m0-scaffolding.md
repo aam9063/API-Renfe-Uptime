@@ -152,3 +152,21 @@ Reverted to 60 s: the budget reads 116 again and the suite is green.
   `--host 127.0.0.1` and a port that is not 4173 on this machine, which is now the config. It is
   not part of `make check` on purpose: the browser suite runs in its own CI job.
 - Deployment, systemd and Netlify: M5, owned by Albert.
+
+### L4 (delivery shape, and a concurrency incident)
+
+The M0 range is `main..feat/m0-scaffolding`: 11 commits, about 4091 authored lines without the
+lock files. That is past the ~400-line review slice, and it ships as **one pull request against
+`dev`** made of 11 reviewable work-unit commits, because `BRIEF.md` section 16 asks for exactly
+that single M0 pull request and because the parts cannot ship alone: the check runner without the
+toolchains it runs is dead code, and the catalog without its budget guard is a number nobody
+checks. The slice boundary is `d09b8ee`, which is where `main` and `dev` sit.
+
+Between 16:54 and 16:59 a **second agent session** worked in this same working directory: it made
+the nine work-unit commits of M0 from the table above, left `main` on the M0 tip, created
+`feat/m1-domain` and began M1. Albert stopped it. Its unfinished M1 work (`classifier.py`,
+`_template.py`, `test_classifier.py`, `incidents.py`, `uptime.py`, `bot_page.py`,
+`contracts/uptime_cases.json`) was found uncommitted in the working tree, is **not** part of this
+delivery, and is parked unverified on `feat/m1-domain` in commit `5298401` so nothing is lost.
+`main` was moved back to the base (`d09b8ee`) by hand, no published history was rewritten because
+the remote was empty. M1 restarts from its own branch with its own document and its own checks.
