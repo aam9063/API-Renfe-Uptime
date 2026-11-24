@@ -38,6 +38,22 @@ two hours on 17 November, and on 18 November, polling every 15 minutes, cutting 
 less than a minute. At 15 minutes that short outage would be invisible, and the map answers
 with `Cache-Control: max-age=30`, so one request per minute already costs nothing extra.
 
+## What the first real run showed (2026-11-24)
+
+| Probe | Answer | Reading |
+| --- | --- | --- |
+| `nsv-config` | 200 | the API key is published where the brief says |
+| `nsv-token` | 200, JWT | the key plus `channel: VLP` is enough |
+| `nsv-stations` | 200, non-empty list | the anonymous session headers we send work |
+| `nsv-search` | 401 | the API key alone is not enough: it needs the Bearer token too |
+| `legacy-shop` | 200 and 200 | the search page and the DWR call answer |
+| `live-map` | 200 with units | the shape of the brief holds |
+| `gtfs-avld` | 200, zip | no `ETag` seen yet on the first call |
+| `www-search` | 200 with the page | marker found |
+
+The 401 of `nsv-search` was published as `unknown`, not `down`, which is the whole point of the
+4xx rule: our request was incomplete, so we had no evidence about Renfe.
+
 ## Pending confirmations (M2)
 
 Each of these is closed by observation, with the command and its output recorded in the M2

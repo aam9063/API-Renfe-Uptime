@@ -48,3 +48,33 @@ with no browser fingerprint.
   request body is still unconfirmed (uncertainties 3 and 4). Documented in `docs/probes.md`.
 - **`Retry-After` lives on the check result.** The scheduler reads it from there, so no probe needs
   to know what a pause is.
+
+### T6 evidence: the first real run
+
+`uv run anden9 probe once --all`, one pass, no loop, from Albert's connection in Spain on
+2026-11-24:
+
+```
+{"probe": "nsv-config",  "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 260}
+{"probe": "nsv-token",   "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 225}
+{"probe": "nsv-stations","outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 55}
+{"probe": "nsv-search",  "outcome": "unknown", "reason": "probe_error", "http_status": 401, "duration_ms": 41}
+{"probe": "legacy-shop", "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 114}
+{"probe": "live-map",    "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 148}
+{"probe": "gtfs-avld",   "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 585}
+{"probe": "www-search",  "outcome": "up",      "reason": "ok",          "http_status": 200, "duration_ms": 65}
+```
+
+What that run proves and what it does not:
+
+- Seven of eight endpoints answer and the shapes the brief describes hold: the API key, the JWT,
+  the non-empty station list, the live map JSON, the zip archive and the search page.
+- `nsv-search` answered 401 with only the API key. That is exactly the case the 4xx rule exists
+  for: the run published `unknown`, never `down`. Fixed by sending the anonymous Bearer token the
+  token probe already fetches; the second run confirms it.
+- Uncertainties of the brief, one by one: 1 (region and provider) is **not** answered, this ran
+  from a home connection and the VPS remains untested; 2 is answered for config, token and
+  stations, and the search needs the Bearer token as well; 3 is still open, the request body has
+  not been accepted yet; 4 is answered at transport level, both requests answer 200; 5 needs a
+  night of observation; 6 needs a second run to show the 304; 9 was not exercised because nothing
+  failed.

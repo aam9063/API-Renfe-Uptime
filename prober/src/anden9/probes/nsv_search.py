@@ -1,9 +1,10 @@
 """Journey search of the new shop: one fixed route, one fixed date.
 
-The request body is the part of this probe that has not been confirmed by observation yet
-(uncertainty 3 of the brief). Because of that the probe only asks for a 200 at this stage: an
-unexpected 4xx becomes `unknown` in the classifier, never a published outage, so a wrong body can
-cost us a measurement but can never invent a failure of Renfe.
+The body is the part of this probe that is still unconfirmed (uncertainty 3 of the brief). WHAT:
+on 2026-11-24 the endpoint answered 401 with only the API key, so it also sends the anonymous
+Bearer token that `nsv-token` already fetched. An unexpected 4xx becomes `unknown` in the
+classifier, never a published outage, so a wrong body can cost us a measurement but can never
+invent a failure of Renfe.
 """
 
 from __future__ import annotations
@@ -62,6 +63,8 @@ class NsvSearchProbe:
         await api_key(context, context.session)
         headers = session_headers(context.session)
         headers["content-type"] = "application/json"
+        if context.session.access_token is not None:
+            headers["authorization"] = f"Bearer {context.session.access_token}"
         request = HttpRequest(
             method="POST",
             url=context.spec.url,
