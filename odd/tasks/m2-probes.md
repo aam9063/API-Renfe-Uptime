@@ -104,3 +104,36 @@ Two notes on what these runs cannot show:
   with an empty session. The 304 shows up on the second run inside the scheduler, which is the shape
   the unit tests already pin.
 - The control endpoint never runs in a one-shot pass unless something goes `down`, by design.
+
+### T6 evidence, third run: the whole catalog is green
+
+After reading the request shape in `renfe-cli` (`src/renfe/search.py:31-36` and `:285-289`,
+`src/renfe/client.py:296-307`), the search sends the body and the headers the project sends. One
+pass, no loop:
+
+```
+nsv-config   up  ok  200  126 ms
+nsv-token    up  ok  200  208 ms
+nsv-stations up  ok  200   55 ms
+nsv-search   up  ok  200  166 ms
+legacy-shop  up  ok  200  105 ms
+live-map     up  ok  200  139 ms
+gtfs-avld    up  ok  200  462 ms
+www-search   up  ok  200   80 ms
+```
+
+That closes uncertainty 3 of the brief, and with it the whole M2 acceptance:
+
+| Uncertainty | State |
+| --- | --- |
+| 1 region and provider | open, the VPS is untested |
+| 2 anonymous session headers | answered: key, `channel: VLP`, `session-id`, `x-terminal-id` from the JWT claim `custom:terminal_id`, Bearer token |
+| 3 `search-travel` before 25 Jan 2027 | answered: the body is two Madrid-midnight UTC timestamps with `.000Z`, a `travel_path` of `{"code": ...}` and `direction: OUTBOUND`; the date is at least ninety days ahead and never before 2026-01-26 |
+| 4 classic shop minimal sequence | answered at transport level: the page and the DWR `generateId` both answer 200 |
+| 5 live map at night | open, needs a night of observation |
+| 6 GTFS conditional | open in a one-shot run, covered by a unit test with a 304 |
+| 9 control endpoint | answered: 204 from inside the container |
+
+Two fixes came out of this, both failing closed: a probe run on its own used to send no token, so it
+now mints one when the session is cold, and the DWR body is the plain text block the classic shop
+expects instead of a query string.

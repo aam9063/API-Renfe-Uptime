@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 from dataclasses import dataclass
 
@@ -24,6 +25,7 @@ EXPECTED_STATUS = 200
 TOKEN_FIELD = "accessToken"  # noqa: S105
 CHANNEL = "VLP"
 JWT_PARTS = 3
+TERMINAL_CLAIM = "custom:terminal_id"
 
 
 def read_payload(response: HttpResponse) -> tuple[PayloadState, str | None]:
@@ -43,6 +45,23 @@ def read_payload(response: HttpResponse) -> tuple[PayloadState, str | None]:
     return PayloadState.VALID, token
 
 
+def terminal_id_of(token: str) -> str | None:
+    """The terminal id rides inside the anonymous token as a claim."""
+    parts = token.split(".")
+    if len(parts) != JWT_PARTS:
+        return None
+    payload = parts[1]
+    padded = payload + "=" * (-len(payload) % 4)
+    try:
+        claims = json.loads(base64.urlsafe_b64decode(padded))
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(claims, dict):
+        return None
+    value = claims.get(TERMINAL_CLAIM)
+    return value if isinstance(value, str) and value else None
+
+
 async def api_key(context: ProbeContext, session: SessionState) -> str | None:
     """Reuse the key `nsv-config` already found; ask for it once when the session is cold."""
     if session.api_key is not None:
@@ -55,6 +74,20 @@ async def api_key(context: ProbeContext, session: SessionState) -> str | None:
     )
     await NsvConfigProbe().run(cold)
     return session.api_key
+
+
+async def access_token(context: ProbeContext, session: SessionState) -> str | None:
+    """Reuse the token this process already minted; mint one when a probe runs alone."""
+    if session.access_token is not None:
+        return session.access_token
+    warm = ProbeContext(
+        spec=spec_by_id(PROBE_ID),
+        http=context.http,
+        clock=context.clock,
+        session=session,
+    )
+    await NsvTokenProbe().run(warm)
+    return session.access_token
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,4 +113,7 @@ class NsvTokenProbe:
         payload, token = read_payload(response)
         if token is not None:
             context.session.access_token = token
+            terminal_id = terminal_id_of(token)
+            if terminal_id is not None:
+                context.session.terminal_id = terminal_id
         return classify(response, context.spec, payload=payload)
