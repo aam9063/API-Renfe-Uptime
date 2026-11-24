@@ -4,6 +4,9 @@ The minimal sequence is uncertainty 4 of the brief, so this probe measures trans
 availability only: two answers with a 200 on the same host. It deliberately does not fail on the
 content of the DWR response until the sequence has been confirmed by observation, because a wrong
 body of ours must not become an outage of Renfe.
+
+WHAT: the DWR call takes plain text lines, not a query string, and names the page that answered the
+search. Read from `renfe-cli` (`src/renfe/legacy.py`) on 2026-11-24.
 """
 
 from __future__ import annotations
@@ -24,17 +27,21 @@ from anden9.version import __version__
 
 PROBE_ID = "legacy-shop"
 EXPECTED_STATUS = 200
-SEARCH_PAGE_PATH = "/vol/buscarTren.do?Idioma=es&Pais=ES"
 DWR_PATH = "/vol/dwr/call/plaincall/__System.generateId.dwr"
-DWR_BODY = (
-    "callCount=1"
-    "&c0-scriptName=__System"
-    "&c0-methodName=generateId"
-    "&c0-id=0"
-    "&batchId=0"
-    "&page=%2Fvol%2FbuscarTren.do"
-    "&httpSessionId="
-    "&scriptSessionId="
+DWR_PAGE = "/vol/buscarTrenEnlaces.do"
+DWR_BODY = "\n".join(
+    (
+        "callCount=1",
+        "c0-scriptName=__System",
+        "c0-methodName=generateId",
+        "c0-id=0",
+        "batchId=0",
+        "instanceId=0",
+        "page=%2Fvol%2FbuscarTrenEnlaces.do",
+        "scriptSessionId=",
+        "windowName=",
+        "",
+    )
 )
 
 
@@ -65,37 +72,37 @@ class LegacyShopProbe:
             headers={"accept": "text/html", "user-agent": f"anden9-probe/{__version__}"},
         )
         try:
-            first = await context.http.send(page)
+            response = await context.http.send(page)
         except HttpError as error:
             return classify_failure(error, context.spec)
         except Exception:
             return classify_probe_error(context.spec)
-
-        return classify(first, context.spec, payload=read_payload(first))
+        return classify(response, context.spec, payload=read_payload(response))
 
     async def _session_call(
         self,
         context: ProbeContext,
         classified: CheckResult,
     ) -> CheckResult:
+        origin = _origin(context.spec.url)
         dwr = HttpRequest(
             method="POST",
-            url=f"{_origin(context.spec.url)}{DWR_PATH}",
+            url=f"{origin}{DWR_PATH}",
             timeout_s=context.spec.timeout_s,
             headers={
-                "accept": "text/plain",
+                "accept": "*/*",
                 "content-type": "text/plain",
-                "origin": _origin(context.spec.url),
-                "referer": context.spec.url,
+                "origin": origin,
+                "referer": f"{origin}{DWR_PAGE}",
             },
             body=DWR_BODY.encode("utf-8"),
         )
         try:
-            second = await context.http.send(dwr)
+            response = await context.http.send(dwr)
         except HttpError as error:
             return classify_failure(error, context.spec)
         except Exception:
             return classify_probe_error(context.spec)
-        if second.status != EXPECTED_STATUS:
-            return CheckResult(Outcome.DOWN, Reason.BAD_SHAPE, second.status, second.elapsed_ms)
+        if response.status != EXPECTED_STATUS:
+            return CheckResult(Outcome.DOWN, Reason.BAD_SHAPE, response.status, response.elapsed_ms)
         return classified

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from uuid import uuid4
 
 
 @dataclass(slots=True)
@@ -14,7 +15,7 @@ class SessionState:
     """
 
     api_key: str | None = None
-    session_id: str | None = None
+    session_id: str = field(default_factory=lambda: str(uuid4()))
     terminal_id: str | None = None
     access_token: str | None = None
     gtfs_etag: str | None = None

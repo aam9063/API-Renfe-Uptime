@@ -19,8 +19,7 @@ def session_headers(session: SessionState) -> dict[str, str]:
     }
     if session.api_key is not None:
         headers["x-api-key"] = session.api_key
-    if session.session_id is not None:
-        headers["session-id"] = session.session_id
+    headers["session-id"] = session.session_id
     if session.terminal_id is not None:
         headers["x-terminal-id"] = session.terminal_id
     return headers
