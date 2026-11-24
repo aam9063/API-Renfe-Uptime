@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueves, inicio en móvil</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2446E0;text-decoration:none}a:hover{color:#15171C}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1700px; box-sizing: border-box; font-family: Inter, system-ui, sans-serif; color: #15171C; background: #F6F6F3; display: flex; flex-direction: column">
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E3E3DE; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between">
+    <a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; color: #15171C">
+      <span style="width: 30px; height: 30px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px">.9</span>
+      <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px">nueves</span>
+    </a>
+    <button aria-label="Abrir menú" style="width: 44px; height: 44px; border: 1px solid #E3E3DE; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171C" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </button>
+  </header>
+
+  <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px">
+    <span style="align-self: flex-start; font-size: 12px; font-weight: 600; padding: 5px 10px; border: 1px solid #C9CBC4; border-radius: 999px; color: #3E434D">No oficial · sin relación con Renfe</span>
+
+    <section style="background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px">¿Cuántos nueves tiene Renfe?</h1>
+      <div role="tablist" aria-label="Ventana de tiempo" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #F0F0EC; border-radius: 10px">
+        <button role="tab" aria-selected="false" style="font: 600 14px Inter, sans-serif; min-height: 40px; border: 0; border-radius: 8px; background: transparent; color: #3E434D">24h</button>
+        <button role="tab" aria-selected="false" style="font: 600 14px Inter, sans-serif; min-height: 40px; border: 0; border-radius: 8px; background: transparent; color: #3E434D">7d</button>
+        <button role="tab" aria-selected="true" style="font: 600 14px Inter, sans-serif; min-height: 40px; border: 0; border-radius: 8px; background: #15171C; color: #FFFFFF">30d</button>
+        <button role="tab" aria-selected="false" style="font: 600 14px Inter, sans-serif; min-height: 40px; border: 0; border-radius: 8px; background: transparent; color: #3E434D">90d</button>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 72px; line-height: 1; font-weight: 600; letter-spacing: -3px">99,41<span style="font-size: 32px; letter-spacing: 0">%</span></div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700">2 nueves</span>
+        <span style="font-size: 14px; color: #5B616E">4 h 15 min caído</span>
+      </div>
+      <span style="align-self: flex-start; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: #FFF4DE; color: #7A4B00">Datos de ejemplo para el diseño</span>
+    </section>
+
+    <section aria-labelledby="svc-m" style="display: flex; flex-direction: column; gap: 10px">
+      <h2 id="svc-m" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 18px">Servicios · 30 días</h2>
+      <sc-for list="{{services}}" as="s" hint-placeholder-count="8">
+        <a href="Servicio.dc.html" style="background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; color: #15171C">
+          <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline">
+            <span style="font-weight: 600; font-size: 15px">{{s.name}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; white-space: nowrap">{{s.uptime}}</span>
+          </div>
+          <div role="img" aria-label="{{s.label}}" style="display: flex; gap: 2px; height: 22px">
+            <sc-for list="{{s.bars}}" as="b" hint-placeholder-count="30"><span style="{{b.style}}"></span></sc-for>
+          </div>
+          <span style="font-size: 13px; color: #5B616E">{{s.nines}} · p95 {{s.p95}}</span>
+        </a>
+      </sc-for>
+    </section>
+
+    <section aria-labelledby="inc-m" style="display: flex; flex-direction: column; gap: 10px">
+      <h2 id="inc-m" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 18px">Último incidente</h2>
+      <article style="background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+        <span style="align-self: flex-start; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #FBE4E2; color: #8E1F19">Caído</span>
+        <h3 style="margin: 0; font-size: 15px">El mapa en vivo rechaza conexiones</h3>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5B616E">hace 4 días · 2 h 14 min</span>
+      </article>
+    </section>
+
+    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5B616E">Proyecto independiente y no oficial. Medimos desde fuera con una sonda que se identifica y nunca intenta saltarse bloqueos. <a href="Metodologia.dc.html">Metodología</a></p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const C = { up: '#1E8E50', deg: '#E0A03A', down: '#C8362F', none: '#DCDDD8' };
+    const mk = (down, deg, none) => {
+      const out = [];
+      for (let i = 0; i < 30; i++) {
+        const k = i < (none || 0) ? 'none' : (down.indexOf(i) >= 0 ? 'down' : (deg.indexOf(i) >= 0 ? 'deg' : 'up'));
+        out.push({ style: 'flex: 1 1 0; border-radius: 2px; background: ' + C[k] });
+      }
+      return out;
+    };
+    const s = (name, uptime, nines, p95, bars) => ({ name, uptime, nines, p95, bars, label: name + ': estado diario de los últimos 30 días' });
+    return {
+      services: [
+        s('Configuración web', '99,96 %', '3 nueves', '180 ms', mk([], [1])),
+        s('Token público', '99,90 %', '3 nueves', '240 ms', mk([], [1, 2])),
+        s('Catálogo de estaciones', '99,88 %', '2 nueves', '310 ms', mk([], [])),
+        s('Búsqueda de viajes', '99,12 %', '2 nueves', '1,4 s', mk([10], [11])),
+        s('Venta clásica', '97,80 %', '1 nueve', '2,9 s', mk([17], [18])),
+        s('Mapa en vivo', '98,71 %', '1 nueve', '640 ms', mk([26], [27])),
+        s('Horarios GTFS AV/LD', '99,99 %', '4 nueves', '120 ms', mk([], [])),
+        s('Buscador renfe.com', '99,95 %', '3 nueves', '420 ms', mk([], []))
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

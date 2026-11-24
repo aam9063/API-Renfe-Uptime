@@ -1,0 +1,55 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2050,
+      "title": "Inicio (escritorio)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    {
+      "file": "Servicio.dc.html",
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1850,
+      "title": "Detalle de servicio",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    {
+      "file": "Metodologia.dc.html",
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2000,
+      "title": "Metodología",
+      "expand": "fill"
+    },
+    {
+      "file": "Movil.dc.html",
+      "x": 4560,
+      "y": 0,
+      "w": 390,
+      "h": 1700,
+      "title": "Inicio (móvil)"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "titulo",
+      "x": 0,
+      "y": -300,
+      "w": 240,
+      "maxW": 4950,
+      "text": "Nueves · status page no oficial de las APIs de Renfe",
+      "kind": "title1"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
