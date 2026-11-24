@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import httpx
 import pytest
+
 from local_db import ANON_KEY, LOCAL_URL, SERVICE_KEY, headers, requires_local_db
 
 pytestmark = [pytest.mark.integration, requires_local_db]
@@ -104,7 +105,7 @@ def test_anon_can_read_every_public_view(view: str) -> None:
     assert isinstance(rows, list)
 
 
-@pytest.mark.parametrize("view", ("v_uptime_windows", "v_daily_90"))
+@pytest.mark.parametrize("view", ["v_uptime_windows", "v_daily_90"])
 def test_the_views_backed_by_a_function_return_rows_for_anon(view: str) -> None:
     response = httpx.get(
         f"{LOCAL_URL}/rest/v1/{view}",
