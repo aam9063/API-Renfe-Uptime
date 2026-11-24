@@ -89,6 +89,39 @@ docker run --rm --env-file /etc/anden9/prober.env anden9-prober
 - Before pointing the page at a new host, run `anden9 probe once --all` from there: a datacenter IP
   is uncertainty 1 of the brief, and a systematic `blocked` is visible in that one pass.
 
+### NaN Cloud, field by field
+
+Nan Cloud builds a container from a Dockerfile in the repository and asks for these values.
+
+**Web**
+
+| Field | Value |
+| --- | --- |
+| Dockerfile path | `web/Dockerfile` |
+| Build context | `.` |
+| Expose over HTTP | yes, container port **3000** |
+| Environment, **Build** tab | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` |
+| Environment, **Runtime** tab | nothing: the anon key and the URL are already inside the bundle |
+
+The two `VITE_*` belong in the **Build** tab because Vite inlines them; putting them in Runtime does
+nothing and the site would say "sin datos" for ever. The image listens on 3000 by default and also
+honours an injected `PORT`, so the container port field and the image agree out of the box.
+
+**Prober**
+
+| Field | Value |
+| --- | --- |
+| Dockerfile path | `prober/Dockerfile` |
+| Build context | `.` |
+| Expose over HTTP | optional: with `ANDEN9_HEALTH_PORT` set, the container answers `/healthz` |
+| Environment, **Runtime** tab | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANDEN9_REGION`, `ANDEN9_HEALTH_PORT` |
+| Environment, **Build** tab | nothing |
+
+The prober is a worker, not a service: it measures and writes, and has no inbound API on purpose.
+Some platforms only keep a container alive if it answers HTTP, so setting `ANDEN9_HEALTH_PORT`
+(3000, for example) starts a tiny server that answers `/healthz` with `ok` and returns 404 for
+everything else. Without that variable, nothing is opened.
+
 ### Prober on the VPS
 
 ```bash
