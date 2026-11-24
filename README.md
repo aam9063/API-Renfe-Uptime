@@ -25,7 +25,7 @@ acceptance check has been observed.
 | M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
 | M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | pending |
-| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
+| M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | built, awaiting review |
 | M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
 
 M0 is [pull request #1](https://github.com/aam9063/API-Renfe-Uptime/pull/1) against `dev`, with
