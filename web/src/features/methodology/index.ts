@@ -1,1 +1,1 @@
-export { Methodology } from './Methodology'
+export { Methodology, ProbeCatalog } from './Methodology'
