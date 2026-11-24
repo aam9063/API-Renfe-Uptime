@@ -26,11 +26,14 @@ RUN pnpm build
 
 FROM nginxinc/nginx-unprivileged:1.29-alpine AS runtime
 
-# The image already runs as uid 101 and listens on 8080, no root anywhere.
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# The image already runs as uid 101 and listens on PORT, no root anywhere.
+# The entrypoint of this image runs envsubst over /etc/nginx/templates, so a platform that
+# injects PORT gets it without touching the config.
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
+ENV PORT=8080
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --quiet --output-document=- http://127.0.0.1:8080/healthz || exit 1
+  CMD wget --quiet --output-document=- http://127.0.0.1:${PORT}/healthz || exit 1

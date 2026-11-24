@@ -1,5 +1,6 @@
 server {
-    listen 8080;
+    # A platform may inject PORT; 8080 is the default of this image.
+    listen ${PORT};
     server_name _;
 
     root /usr/share/nginx/html;
