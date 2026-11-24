@@ -29,6 +29,9 @@ web/.evidence/
 test-results/
 playwright-report/
 
+# Parallel agent worktrees
+.worktrees/
+
 # Editors and OS
 .DS_Store
 .idea/

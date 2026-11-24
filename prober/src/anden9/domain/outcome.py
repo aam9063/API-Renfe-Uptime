@@ -52,6 +52,7 @@ class CheckResult:
     reason: Reason
     http_status: int | None
     duration_ms: int
+    retry_after_s: int | None = None
 
     def counts_as_available(self) -> bool:
         return self.outcome in AVAILABLE

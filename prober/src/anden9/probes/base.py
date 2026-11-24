@@ -8,6 +8,7 @@ from typing import Protocol, runtime_checkable
 from anden9.domain.outcome import CheckResult
 from anden9.domain.ports import Clock, HttpPort
 from anden9.domain.spec import ProbeSpec
+from anden9.probes.session import SessionState
 
 
 @dataclass(frozen=True, slots=True)
@@ -17,12 +18,14 @@ class ProbeContext:
     spec: ProbeSpec
     http: HttpPort
     clock: Clock
+    session: SessionState
 
 
 @runtime_checkable
 class Probe(Protocol):
     """One endpoint, one request, one classified result."""
 
-    probe_id: str
+    @property
+    def probe_id(self) -> str: ...
 
     async def run(self, context: ProbeContext) -> CheckResult: ...
