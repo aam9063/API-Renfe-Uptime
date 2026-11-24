@@ -43,3 +43,38 @@ S3 (secrets, verbatim from `AGENTS.md` §5.1): the `service_role` key is read on
   rotation lives with it.
 - The workflow is inert until Albert adds the two Supabase secrets; it says so in its log instead of
   failing red every fifteen minutes.
+
+### T6 evidence: the image, built and run here
+
+```
+$ docker build -t anden9-prober:local prober        # ok, 273 MB
+$ docker run --rm anden9-prober:local --version
+anden9-probe/0.1.0
+$ docker run --rm --entrypoint id anden9-prober:local
+uid=10001(anden9) gid=10001(anden9) groups=10001(anden9)
+$ docker run --rm anden9-prober:local probe once control
+{"probe": "control", "outcome": "up", "reason": "ok", "http_status": 204, "duration_ms": 94}
+$ docker run --rm anden9-prober:local probe once live-map
+{"probe": "live-map", "outcome": "up", "reason": "ok", "http_status": 200, "duration_ms": 143}
+```
+
+So the image carries the prober, runs unprivileged, reaches the control endpoint and reaches Renfe.
+
+Three things this milestone fixed along the way, all of them found by running it:
+
+- Docker was not running on the machine, so the first `docker build` failed with a daemon error.
+  Started it, and then it worked.
+- `probe once control` raised `KeyError: 'unknown probe: control'`, because the control endpoint was
+  not resolvable by id although the runbook tells the operator to use exactly that command. Fixed
+  in `spec_by_id`, and the control endpoint is deliberately **not** part of `--all`, since it is not
+  a measured service.
+- The CI workflow only listened to pull requests against `dev`, so every chained pull request
+  carried no checks at all. It now runs on every pull request.
+
+### Not verified here
+
+- The systemd unit and the compose file on a real host: there is no VPS to run them on, and both
+  are one `systemctl` call away from being wrong in a way only Linux shows.
+- Netlify: the configuration is written but no deploy has been made.
+- The heartbeat workflow: it needs the two Supabase secrets that only Albert can add, and until
+  then it logs that it is unconfigured instead of failing.
