@@ -54,4 +54,10 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'no-magic-numbers': 'off',
+    },
+  },
 )

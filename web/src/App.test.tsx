@@ -1,16 +1,26 @@
 import { act, render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { App } from './App'
 
 const NAVIGATE_EVENT = 'anden9:navigate'
 
+function renderApp() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  render(
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>,
+  )
+}
+
 function renderAt(path: string) {
   act(() => {
     window.history.pushState({}, '', path)
     window.dispatchEvent(new Event(NAVIGATE_EVENT))
   })
-  render(<App />)
+  renderApp()
 }
 
 afterEach(() => {
@@ -22,7 +32,7 @@ afterEach(() => {
 
 describe('the shell and the routes', () => {
   it('shows the unofficial notice on every route', () => {
-    render(<App />)
+    renderApp()
     for (const path of ['/', '/metodologia', '/servicio/live-map', '/algun-sitio-inexistente']) {
       act(() => {
         window.history.pushState({}, '', path)
@@ -34,7 +44,7 @@ describe('the shell and the routes', () => {
 
   it('understands the three routes', () => {
     renderAt('/')
-    expect(screen.getByRole('heading', { name: '¿Cuántos nueves tiene Renfe?' })).toBeDefined()
+    expect(screen.getAllByText('Sin datos').length).toBeGreaterThan(0)
 
     act(() => {
       window.history.pushState({}, '', '/metodologia')
