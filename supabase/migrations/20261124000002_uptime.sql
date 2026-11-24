@@ -10,6 +10,8 @@ create or replace function public.probe_seconds(
 returns table (outcome public.outcome_enum, seconds bigint)
 language sql
 stable
+security definer
+set search_path = public
 as $$
   with ordered as (
     select
@@ -123,6 +125,8 @@ create or replace function public.daily_seconds(
 returns table (day date, outcome public.outcome_enum, seconds bigint)
 language sql
 stable
+security definer
+set search_path = public
 as $$
   with bounds as (
     select

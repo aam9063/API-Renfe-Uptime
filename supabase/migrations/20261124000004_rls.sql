@@ -24,6 +24,10 @@ grant all on table public.daily_rollups to service_role;
 grant usage, select on all sequences in schema public to service_role;
 grant execute on function public.uptime_summary(bigint, bigint, bigint, bigint, bigint, bigint)
   to anon, authenticated, service_role;
+grant execute on function public.probe_seconds(text, timestamptz, timestamptz)
+  to anon, authenticated, service_role;
+grant execute on function public.daily_seconds(text, integer)
+  to anon, authenticated, service_role;
 
 -- Belt and braces: with RLS on and no policy, even a stray grant reads nothing.
 drop policy if exists probes_read on public.probes;
