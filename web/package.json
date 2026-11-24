@@ -15,7 +15,7 @@
     "test": "vitest run",
     "arch": "depcruise src --config .dependency-cruiser.cjs",
     "e2e": "playwright test --project=desktop --project=mobile",
-    "e2e:evidence": "playwright test --project=evidence"
+    "e2e:evidence": "playwright test --project=evidence --project=evidence-mobile"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",

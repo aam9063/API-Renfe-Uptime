@@ -34,5 +34,10 @@ export default defineConfig({
       testMatch: /evidence/,
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
+    {
+      name: 'evidence-mobile',
+      testMatch: /evidence/,
+      use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
+    },
   ],
 })
