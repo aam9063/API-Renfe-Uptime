@@ -3,17 +3,22 @@ name = "anden9"
 version = "0.1.0"
 description = "Unofficial uptime prober for the Renfe APIs"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "httpx>=0.28.1",
+]
 
 [project.scripts]
 anden9 = "anden9.cli:main"
 
 [dependency-groups]
 dev = [
+  "anyio>=4.16.0",
   "hypothesis>=6.140",
   "import-linter>=2.1",
   "mypy>=1.19",
   "pytest>=8.4",
+  "pytest-asyncio>=1.5.0",
+  "respx>=0.23.1",
   "ruff>=0.14",
 ]
 
@@ -50,6 +55,9 @@ mypy_path = "src"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["tests"]
 
 [tool.importlinter]
 root_packages = ["anden9"]
