@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueves, metodología</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F6F3}
+a{color:#2446E0;text-decoration:none}a:hover{color:#15171C;text-decoration:underline}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #15171C; background: #F6F6F3; min-height: 100vh">
+  <header style="border-bottom: 1px solid #E3E3DE; background: #FFFFFF">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; color: #15171C; text-decoration: none">
+        <span style="width: 34px; height: 34px; border-radius: 8px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 16px">.9</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px">nueves</span>
+      </a>
+      <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 15px; font-weight: 500; flex: 1 1 auto">
+        <a href="Main.dc.html" style="color: #5B616E">Estado</a>
+        <a href="Main.dc.html#incidentes" style="color: #5B616E">Incidentes</a>
+        <a href="Metodologia.dc.html" style="color: #15171C">Metodología</a>
+      </nav>
+      <span style="font-size: 13px; font-weight: 600; padding: 6px 10px; border: 1px solid #C9CBC4; border-radius: 999px; color: #3E434D">No oficial · sin relación con Renfe</span>
+    </div>
+  </header>
+
+  <main style="max-width: 960px; margin: 0 auto; padding: 48px 32px 72px; display: flex; flex-direction: column; gap: 40px">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 44px">Cómo medimos</h1>
+      <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #3E434D">Una sonda llama a los mismos servicios que usa renfe-cli, cada pocos minutos, y anota si respondieron bien. Con eso calculamos el uptime y lo traducimos a nueves, igual que hace cualquier status page de un SaaS.</p>
+    </div>
+
+    <section aria-labelledby="estados" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="estados" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px">Los cinco estados</h2>
+      <div style="background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 16px; overflow: hidden">
+        <sc-for list="{{states}}" as="s" hint-placeholder-count="5">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 18px 24px; border-top: 1px solid #EFEFEB; align-items: baseline">
+            <span style="display: flex; align-items: center; gap: 8px; flex: 0 0 160px; font-weight: 600"><span style="{{s.dot}}"></span>{{s.name}}</span>
+            <span style="flex: 1 1 360px; font-size: 15px; line-height: 1.5; color: #3E434D">{{s.text}}</span>
+            <span style="{{s.countStyle}}">{{s.count}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section aria-labelledby="formula" style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 1 1 400px; display: flex; flex-direction: column; gap: 12px">
+        <h2 id="formula" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px">La fórmula</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3E434D">Cada comprobación cubre su intervalo. Los minutos bloqueados o sin datos salen del denominador: no sabemos qué vio un usuario normal, así que no los contamos ni a favor ni en contra.</p>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3E434D">Un incidente se abre tras 2 fallos seguidos y se cierra tras 2 éxitos seguidos. La duración cuenta desde el primer fallo.</p>
+      </div>
+      <div style="flex: 1 1 400px; background: #15171C; color: #FFFFFF; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px; font-family: 'JetBrains Mono', monospace; font-size: 15px; line-height: 1.6">
+        <div><span style="color: #B9BEC8">uptime =</span><br>(operativo + degradado)<br>/ (total − bloqueado − sin datos)</div>
+        <div><span style="color: #B9BEC8">nueves =</span> floor(−log10(1 − uptime))</div>
+        <div style="color: #B9BEC8; font-size: 13px">99,41 % → −log10(0,0059) = 2,23 → 2 nueves</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="que" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="que" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px">Qué servicios y cada cuánto</h2>
+      <div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 16px">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px">
+          <thead><tr style="text-align: left; color: #5B616E; font-size: 12px; background: #FAFAF8"><th style="padding: 12px 24px; font-weight: 600">Servicio</th><th style="padding: 12px; font-weight: 600">Endpoint</th><th style="padding: 12px; font-weight: 600">Cada</th><th style="padding: 12px 24px 12px 12px; font-weight: 600">Válido si</th></tr></thead>
+          <tbody>
+            <sc-for list="{{probes}}" as="p" hint-placeholder-count="8">
+              <tr style="border-top: 1px solid #EFEFEB"><td style="padding: 12px 24px; font-weight: 600">{{p.name}}</td><td style="padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #3E434D">{{p.url}}</td><td style="padding: 12px; font-family: 'JetBrains Mono', monospace">{{p.every}}</td><td style="padding: 12px 24px 12px 12px; color: #3E434D">{{p.valid}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 1 1 400px; background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px">Juego limpio</h2>
+        <ul style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.7; color: #3E434D">
+          <li>La sonda se presenta como <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px">nueves-probe</span>, no se hace pasar por un navegador.</li>
+          <li>Nunca intenta saltarse una cola, un captcha o un bloqueo.</li>
+          <li>Una petición a la vez por servicio y nunca más de una por minuto.</li>
+          <li>No guarda claves ni tokens de Renfe, solo si se pudieron obtener.</li>
+        </ul>
+      </div>
+      <div style="flex: 1 1 400px; background: #FFFFFF; border: 1px solid #E3E3DE; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px">Lo que no vemos</h2>
+        <ul style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.7; color: #3E434D">
+          <li>Medimos desde [REGIÓN DE LA SONDA]. Un fallo regional puede no verse aquí, o verse solo aquí.</li>
+          <li>Vemos la puerta, no la cocina: nada de los sistemas internos de Renfe.</li>
+          <li>La venta clásica se retira cuando la nueva venda todos los viajes (25 ene 2027).</li>
+        </ul>
+      </div>
+    </section>
+
+    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #5B616E">Los endpoints salen de <a href="https://github.com/luisgonzaleznf/renfe-cli">renfe-cli</a>, de Luis González, con licencia MIT. Nueves es un proyecto independiente: no está afiliado, respaldado ni soportado por Renfe.</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dot = (bg) => 'width: 12px; height: 12px; border-radius: 3px; background: ' + bg;
+    const yes = 'font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #E3F3E9; color: #155C36';
+    const bad = 'font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #FBE4E2; color: #8E1F19';
+    const no = 'font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #EDEEEA; color: #3E434D';
+    return {
+      states: [
+        { name: 'Operativo', dot: dot('#1E8E50'), text: 'Responde con el código esperado, la forma de datos correcta y por debajo del umbral de latencia.', count: 'Cuenta como disponible', countStyle: yes },
+        { name: 'Degradado', dot: dot('#E0A03A'), text: 'Responde bien pero lento, o con datos viejos. Se ve en la página y en el detalle.', count: 'Cuenta como disponible', countStyle: yes },
+        { name: 'Caído', dot: dot('#C8362F'), text: 'Timeout, conexión rechazada, 5xx o una respuesta que no tiene la forma esperada (un 200 con HTML de error también).', count: 'Cuenta en contra', countStyle: bad },
+        { name: 'Bloqueado', dot: 'width: 12px; height: 12px; border-radius: 3px; background: repeating-linear-gradient(45deg,#7C8696 0 2px,#C5CAD3 2px 4px)', text: '403, 429, una página de protección o una sala de espera. Renfe ha decidido no hablar con la sonda.', count: 'No cuenta', countStyle: no },
+        { name: 'Sin datos', dot: dot('#DCDDD8'), text: 'La sonda no llegó a medir, o el endpoint de control tampoco respondía: el problema era nuestro.', count: 'No cuenta', countStyle: no }
+      ],
+      probes: [
+        { name: 'Configuración web', url: 'GET venta.rsv.renfe.com/config/arch-config.json', every: '5 min', valid: '200, JSON con la clave pública' },
+        { name: 'Token público', url: 'GET api.rsv.renfe.com/user/external-users-login/v1/tokens/public', every: '5 min', valid: '200, devuelve accessToken' },
+        { name: 'Catálogo de estaciones', url: 'GET api.rsv.renfe.com/catalog/masterdata/v1/stations', every: '15 min', valid: '200, lista de estaciones no vacía' },
+        { name: 'Búsqueda de viajes', url: 'POST api.rsv.renfe.com/browsing/traveloptions/v1/search-travel', every: '15 min', valid: '200, ruta fija Madrid y Barcelona' },
+        { name: 'Venta clásica', url: 'GET venta.renfe.com/vol/buscarTren.do', every: '15 min', valid: '200 y sesión DWR creada' },
+        { name: 'Mapa en vivo', url: 'GET tiempo-real.largorecorrido.renfe.com/renfe-visor/flotaLD.json', every: '1 min', valid: '200, JSON del mapa, < 2 s' },
+        { name: 'Horarios GTFS AV/LD', url: 'GET ssl.renfe.com/gtransit/Fichero_AV_LD/google_transit.zip', every: '15 min', valid: '200 o 304 con ETag' },
+        { name: 'Buscador renfe.com', url: 'GET www.renfe.com/es/es/buscador-billetes', every: '5 min', valid: '200, HTML del buscador' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
