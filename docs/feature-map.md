@@ -109,10 +109,10 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - How to reach it in the UI: indirectly.
 - Keyboard shortcuts: not applicable.
 - Selectors for programmatic control: not applicable.
-- Code location: `prober/src/anden9/adapters/store_supabase.py` (pending).
+- Code location: `prober/src/anden9/adapters/store_supabase.py`.
 - Backend/API involved: `checks`, `incidents`, `heartbeat` tables.
 - Known pitfalls: the `service_role` key is read only by `config.py` and never leaves the prober environment.
-- Status: pending (M3).
+- Status: built (M3).
 
 ## db-views
 
@@ -121,7 +121,7 @@ Status legend: `built` (verified by a check), `pending` (milestone named), `plan
 - How to reach it in the UI: every page.
 - Keyboard shortcuts: not applicable.
 - Selectors for programmatic control: not applicable.
-- Code location: `supabase/migrations/` (pending).
+- Code location: `supabase/migrations/`, contract in `docs/views.md`.
 - Backend/API involved: Postgres, RLS for `anon`.
 - Known pitfalls: the formula lives here and only here; `contracts/uptime_cases.json` runs against it.
-- Status: pending (M3).
+- Status: built (M3).

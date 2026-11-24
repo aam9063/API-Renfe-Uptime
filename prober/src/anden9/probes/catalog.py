@@ -128,6 +128,9 @@ DEV_CATALOG_IDS = ("live-map", "www-search")
 
 
 def spec_by_id(probe_id: str) -> ProbeSpec:
+    """The catalog entry, including the control endpoint, which is not a measured service."""
+    if probe_id == CONTROL_ENDPOINT.probe_id:
+        return CONTROL_ENDPOINT
     for spec in CATALOG:
         if spec.probe_id == probe_id:
             return spec

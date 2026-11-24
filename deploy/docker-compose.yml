@@ -1,0 +1,14 @@
+# Deployed on Albert's VPS. The secrets come from a file outside the repository.
+services:
+  prober:
+    build: ../prober
+    image: anden9-prober:latest
+    container_name: anden9-prober
+    restart: unless-stopped
+    env_file:
+      - /etc/anden9/prober.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
