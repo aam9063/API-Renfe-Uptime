@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "note": "Shared by the SQL views (pytest, M3) and the web formatter (vitest, M4). uptime is an exact fraction on purpose: a truncated display of 99,99 can hide five nines.",
+  "cases": [
+    {
+      "name": "no_downtime_24h",
+      "window_seconds": 86400,
+      "seconds": { "up": 86400, "degraded": 0, "down": 0, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 86400,
+        "denominator_seconds": 86400,
+        "down_seconds": 0,
+        "uptime": "1",
+        "display_percent": "100,00",
+        "nines": null,
+        "insufficient": false,
+        "label": "sin caídas"
+      }
+    },
+    {
+      "name": "everything_blocked_30d",
+      "window_seconds": 2592000,
+      "seconds": { "up": 0, "degraded": 0, "down": 0, "blocked": 2592000, "unknown": 0 },
+      "expect": {
+        "available_seconds": 0,
+        "denominator_seconds": 0,
+        "down_seconds": 0,
+        "uptime": null,
+        "display_percent": null,
+        "nines": null,
+        "insufficient": true,
+        "label": "datos insuficientes"
+      }
+    },
+    {
+      "name": "insufficient_window_90d",
+      "window_seconds": 7776000,
+      "seconds": { "up": 3000000, "degraded": 0, "down": 1000, "blocked": 0, "unknown": 4775000 },
+      "expect": {
+        "available_seconds": 3000000,
+        "denominator_seconds": 3001000,
+        "down_seconds": 1000,
+        "uptime": "3000000/3001000",
+        "display_percent": "99,96",
+        "nines": 3,
+        "insufficient": true,
+        "label": "datos insuficientes"
+      }
+    },
+    {
+      "name": "truncated_99_996_percent",
+      "window_seconds": 100000,
+      "seconds": { "up": 99996, "degraded": 0, "down": 4, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 99996,
+        "denominator_seconds": 100000,
+        "down_seconds": 4,
+        "uptime": "99996/100000",
+        "display_percent": "99,99",
+        "nines": 4,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "one_nine",
+      "window_seconds": 100000,
+      "seconds": { "up": 95000, "degraded": 0, "down": 5000, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 95000,
+        "denominator_seconds": 100000,
+        "down_seconds": 5000,
+        "uptime": "95000/100000",
+        "display_percent": "95,00",
+        "nines": 1,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "two_nines",
+      "window_seconds": 100000,
+      "seconds": { "up": 99000, "degraded": 0, "down": 1000, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 99000,
+        "denominator_seconds": 100000,
+        "down_seconds": 1000,
+        "uptime": "99000/100000",
+        "display_percent": "99,00",
+        "nines": 2,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "three_nines",
+      "window_seconds": 100000,
+      "seconds": { "up": 99900, "degraded": 0, "down": 100, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 99900,
+        "denominator_seconds": 100000,
+        "down_seconds": 100,
+        "uptime": "99900/100000",
+        "display_percent": "99,90",
+        "nines": 3,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "four_nines",
+      "window_seconds": 100000,
+      "seconds": { "up": 99990, "degraded": 0, "down": 10, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 99990,
+        "denominator_seconds": 100000,
+        "down_seconds": 10,
+        "uptime": "99990/100000",
+        "display_percent": "99,99",
+        "nines": 4,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "five_nines_hidden_by_the_same_display",
+      "window_seconds": 100000,
+      "seconds": { "up": 99999, "degraded": 0, "down": 1, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 99999,
+        "denominator_seconds": 100000,
+        "down_seconds": 1,
+        "uptime": "99999/100000",
+        "display_percent": "99,99",
+        "nines": 5,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "blocked_and_unknown_are_excluded",
+      "window_seconds": 2000,
+      "seconds": { "up": 990, "degraded": 0, "down": 10, "blocked": 600, "unknown": 400 },
+      "expect": {
+        "available_seconds": 990,
+        "denominator_seconds": 1000,
+        "down_seconds": 10,
+        "uptime": "990/1000",
+        "display_percent": "99,00",
+        "nines": 2,
+        "insufficient": false,
+        "label": null
+      }
+    },
+    {
+      "name": "degraded_counts_as_available",
+      "window_seconds": 1000,
+      "seconds": { "up": 700, "degraded": 299, "down": 1, "blocked": 0, "unknown": 0 },
+      "expect": {
+        "available_seconds": 999,
+        "denominator_seconds": 1000,
+        "down_seconds": 1,
+        "uptime": "999/1000",
+        "display_percent": "99,90",
+        "nines": 3,
+        "insufficient": false,
+        "label": null
+      }
+    }
+  ]
+}

@@ -22,7 +22,7 @@ acceptance check has been observed.
 | Milestone | Scope | Status |
 | --- | --- | --- |
 | M0 | Scaffolding and constraints: monorepo, check runner, canonical templates, docs, guards, CI | built, awaiting review |
-| M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | pending |
+| M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | pending |
 | M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | pending |
 | M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
@@ -41,6 +41,11 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
 - **Measurement vocabulary and catalog** (`prober/src/anden9/domain`, `probes/catalog.py`): the
   five states, the stable reasons, the eight measured endpoints plus the control endpoint, and
   the request budget as data. Budget today: 116 requests per hour to Renfe.
+- **Measurement domain** (`prober/src/anden9/domain`): payload states, bot page detection that can
+  only downgrade a would-be `down` to `blocked`, the control endpoint gate, interval coverage with
+  honest gaps, exact `Fraction` uptime with truncated display, the nines of the downtime ratio, and
+  the incident machine that opens after two failures of a kind and closes after two successes.
+  `contracts/uptime_cases.json` holds eleven shared cases, and hypothesis pins the properties.
 - **Canonical probe template** (`probes/_template.py`): copy it, register the catalog entry, done.
   Timeout from the catalog, one request, no retry, classification delegated to the domain.
 - **Guards** (`scripts/`): `check.py` runs every check with or without GNU make,
@@ -55,8 +60,8 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
 - **CI** (`.github/workflows/check.yml`): `make check` on Linux, the same checks on Windows, and a
   Playwright job. Never runs `make check` against real Renfe.
 
-Still missing on purpose: the classifier's payload rules, incidents, the HTTP adapter, the eight
-probe modules, migrations, views, and the four screens.
+Still missing on purpose: the HTTP adapter, the eight probe modules, the scheduler, migrations,
+views, and the four screens.
 
 ## How measurement works
 
