@@ -42,8 +42,8 @@ function NotFound() {
       <h1 className="m-0 font-display text-[28px] font-bold">Página no encontrada</h1>
       <p className="m-0 text-[15px] leading-relaxed text-ink-soft">
         La página que buscas no existe. Vuelve a{' '}
-        <Link to="/" className="text-link hover:text-ink">Estado</Link> o consulta la{' '}
-        <Link to="/metodologia" className="text-link hover:text-ink">metodología</Link>.
+        <Link to="/" className="text-link underline hover:text-ink">Estado</Link> o consulta la{' '}
+        <Link to="/metodologia" className="text-link underline hover:text-ink">metodología</Link>.
       </p>
     </section>
   )

@@ -145,7 +145,7 @@ export function Methodology() {
           href="https://github.com/luisgonzaleznf/renfe-cli"
           target="_blank"
           rel="noreferrer"
-          className="text-link hover:text-ink"
+          className="text-link underline hover:text-ink"
         >
           renfe-cli
         </a>
