@@ -146,6 +146,9 @@ Reverted to 60 s: the budget reads 116 again and the suite is green.
   that runs `scripts/check.py`, which is what was verified; CI runs the real `make check` on
   Ubuntu and the runner on Windows.
 - The GitHub Actions workflow: the repository has no remote yet, so it has never run.
-- Playwright: chromium was installed and the suite runs against a built preview, see the run
-  recorded in the session; it is not wired into `make check` on purpose.
+- Playwright: green. `pnpm e2e` runs 2 tests (desktop 1440 and mobile 390) against a built
+  preview on `127.0.0.1:4319`, both assert the unofficial notice and fail on any console error;
+  `pnpm e2e:evidence` wrote `web/.evidence/evidence/shell.png`. The preview needs an explicit
+  `--host 127.0.0.1` and a port that is not 4173 on this machine, which is now the config. It is
+  not part of `make check` on purpose: the browser suite runs in its own CI job.
 - Deployment, systemd and Netlify: M5, owned by Albert.
