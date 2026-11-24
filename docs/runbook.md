@@ -57,6 +57,71 @@ select a table and cannot write anything, and a test proves it.
 Everything here is prepared; only Albert can run it, because it needs his VPS, his Supabase cloud
 project and his Netlify account.
 
+### Any container platform
+
+Both halves build as images, so a platform that runs containers can host them without its own build
+system. Nothing in either image is specific to a provider.
+
+**Web** (static build served by an unprivileged nginx):
+
+```bash
+docker build -t anden9-web   --build-arg VITE_SUPABASE_URL=https://<project>.supabase.co   --build-arg VITE_SUPABASE_ANON_KEY=<anon key>   web
+docker run --rm -p 8080:8080 anden9-web
+```
+
+- The two `VITE_*` values are **baked at build time**, because Vite inlines them. An empty value is
+  allowed on purpose: the app then renders the shell and says "sin datos".
+- Listens on **8080** as uid 101, with the SPA fallback so `/servicio/live-map` resolves, and answers
+  `GET /healthz` with `ok` for a platform health check.
+- The anon key is public by design. The `service_role` key must never be a build argument here.
+
+**Prober** (a worker, with no inbound port and no health endpoint):
+
+```bash
+docker build -t anden9-prober prober
+docker run --rm --env-file /etc/anden9/prober.env anden9-prober
+```
+
+- It measures and writes. Its liveness is the heartbeat row that `v_heartbeat` and the scheduled
+  workflow read, not a TCP check.
+- The three variables are in `deploy/prober.env.example`. The start command is the image default,
+  `anden9 run --catalog full`.
+- Before pointing the page at a new host, run `anden9 probe once --all` from there: a datacenter IP
+  is uncertainty 1 of the brief, and a systematic `blocked` is visible in that one pass.
+
+### NaN Cloud, field by field
+
+Nan Cloud builds a container from a Dockerfile in the repository and asks for these values.
+
+**Web**
+
+| Field | Value |
+| --- | --- |
+| Dockerfile path | `web/Dockerfile` |
+| Build context | `.` |
+| Expose over HTTP | yes, container port **3000** |
+| Environment, **Build** tab | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` |
+| Environment, **Runtime** tab | nothing: the anon key and the URL are already inside the bundle |
+
+The two `VITE_*` belong in the **Build** tab because Vite inlines them; putting them in Runtime does
+nothing and the site would say "sin datos" for ever. The image listens on 3000 by default and also
+honours an injected `PORT`, so the container port field and the image agree out of the box.
+
+**Prober**
+
+| Field | Value |
+| --- | --- |
+| Dockerfile path | `prober/Dockerfile` |
+| Build context | `.` |
+| Expose over HTTP | optional: with `ANDEN9_HEALTH_PORT` set, the container answers `/healthz` |
+| Environment, **Runtime** tab | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANDEN9_REGION`, `ANDEN9_HEALTH_PORT` |
+| Environment, **Build** tab | nothing |
+
+The prober is a worker, not a service: it measures and writes, and has no inbound API on purpose.
+Some platforms only keep a container alive if it answers HTTP, so setting `ANDEN9_HEALTH_PORT`
+(3000, for example) starts a tiny server that answers `/healthz` with `ok` and returns 404 for
+everything else. Without that variable, nothing is opened.
+
 ### Prober on the VPS
 
 ```bash
