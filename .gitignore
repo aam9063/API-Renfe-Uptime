@@ -16,6 +16,8 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .hypothesis/
+.import_linter_cache/
+.atl/
 
 # Node
 node_modules/
