@@ -13,7 +13,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 EM_DASH = "\u2014"
-IGNORED_DIRECTORIES = frozenset({".git", "node_modules", ".venv", "dist", ".evidence", ".worktrees"})
+IGNORED_DIRECTORIES = frozenset(
+    {".git", "node_modules", ".venv", "dist", ".evidence", ".worktrees"}
+)
 SECRET_SUFFIXES = (".pem", ".key")
 SECRET_PREFIXES = (".env",)
 GITIGNORE_REQUIRED_ENTRIES = (".env", "*.pem", "*.key")

@@ -51,6 +51,7 @@ def test_the_template_is_not_a_measured_endpoint() -> None:
 
 
 def test_lookup_and_dev_catalog() -> None:
+    assert spec_by_id("control") is CONTROL_ENDPOINT
     assert spec_by_id("live-map").host == "tiempo-real.largorecorrido.renfe.com"
     assert [spec.probe_id for spec in dev_catalog()] == ["live-map", "www-search"]
     assert CONTROL_ENDPOINT.probe_id == "control"
