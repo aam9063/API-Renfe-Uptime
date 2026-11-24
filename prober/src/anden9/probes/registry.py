@@ -38,5 +38,5 @@ def probes_for(specs: Sequence[ProbeSpec]) -> Mapping[str, Probe]:
 
 
 def control_probe() -> Probe:
-    """The same instance the registry hands out, so a test sees one behaviour."""
+    """A fresh instance: the control call keeps no state between runs."""
     return ControlProbe()
