@@ -178,3 +178,25 @@ the remote was empty. M1 restarts from its own branch with its own document and 
   prints a deprecation notice on every run (observed in run 45432566154). The current majors are
   v7, v7, v7, v10 and v6. It is a one-line-per-action change with the same visible result, so it
   belongs in its own `chore(ci)` pull request instead of adding noise to the M0 review.
+
+### Review ledger (RDD on)
+
+The whole-branch candidate was refused by the provider before any authority existed
+(`lens_context_budget_exceeded`, 64 files and 6645 changed lines, lineage
+`review-2edbd23e15911c9c`). It was then assessed and, where due, reviewed slice by slice, in
+commit order, with the working tree checked out at each slice tip and `committedOnly`:
+
+| Slice | Range | Native risk | Outcome |
+| --- | --- | --- | --- |
+| root scaffold, README, NOTICE and the design export | `main..ada4ac9` | high (`dangerous_sink` in the vendored preview runtime) | **refused before authority**: `lens_context_budget_exceeded`, 257 KB of diff, `review-1f80ba7c13283b51` |
+| prober toolchain, catalog, template and tests | `ada4ac9..1775e65` | medium | not due, under the review budget |
+| check runner and repository guards | `1775e65..981c1bd` | high | approved after one reviewer run, acknowledgement burned, `review-fd541d85a9ff141b` |
+| web toolchain, design tokens and template | `981c1bd..6c255f1` | medium | not due, under the review budget |
+| Supabase project and the four documents | `6c255f1..c559423` | medium | not due, under the review budget |
+| CI workflow, line endings, cache ignores and README status | `c559423..33d93f6` | high | approved after one reviewer run, acknowledgement burned, `review-f5cb2d27a71de6ee` |
+
+So five of the six slices carry a native verdict and only the design slice has none. The reason is
+mechanical: `design/_runtime/react-dom.js` (132 KB) and `support.js` (56 KB) are the vendored
+preview runtime of the export, they are 190 KB of the 257 KB candidate, and immutable evidence is
+never truncated. Albert decides whether that export stays inside the M0 candidate, moves to the
+baseline branches, or drops the vendored runtime.
