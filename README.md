@@ -24,7 +24,7 @@ acceptance check has been observed.
 | M0 | Scaffolding and constraints: monorepo, check runner, canonical templates, docs, guards, CI | built, awaiting review |
 | M1 | Measurement domain without network: classifier rules, incident tracker, uptime contract cases | built, awaiting review |
 | M2 | Real probes and scheduler: HTTP adapter, 8 probes, control endpoint, budget, `Retry-After` | built, awaiting review |
-| M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | pending |
+| M3 | Persistence and views: migrations, RLS, public views, Supabase store, heartbeat | built, awaiting review |
 | M4 | Web: four screens, responsive, views only, seeds and Playwright evidence | pending |
 | M5 | Deployment and operation: Docker, systemd, Netlify, runbook, heartbeat alert | pending |
 
@@ -66,7 +66,14 @@ Playwright. The native review refused that candidate for size (`lens_context_bud
   control endpoint and pauses a probe on `Retry-After`, and a CLI with `probe once`, `run` and
   `logs`.
 
-Still missing on purpose: migrations, views, the store adapter, and the four screens.
+- **Database** (`supabase/migrations`): the schema of the brief plus daily rollups, the formula as
+  SQL functions (coverage capped at twice the interval, exact integer nines, truncation, insufficient
+  windows), the eight public views, RLS where `anon` reads views only, and retention that rolls the
+  closed days up before pruning the raw checks. A deterministic seed gives a week of measurements.
+- **Store** (`prober/src/anden9/adapters/store_supabase.py`): one PostgREST call per write, with the
+  service role key read only by `config.py`, which keeps it out of every representation.
+
+Still missing on purpose: the four screens.
 
 ## How measurement works
 
