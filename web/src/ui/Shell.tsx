@@ -33,9 +33,9 @@ export function Shell({ children }: { children: ReactNode }) {
             className="flex items-center gap-2.5 text-ink no-underline hover:text-ink"
           >
             <span className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-panel font-mono text-[14px] font-semibold text-surface md:h-[34px] md:w-[34px] md:rounded-lg md:text-[16px]">
-              .9
+              A9
             </span>
-            <span className="font-display text-[20px] font-bold md:text-[22px]">nueves</span>
+            <span className="font-display text-[20px] font-bold md:text-[22px]">Andén 9</span>
           </Link>
           <nav
             aria-label="Principal"
