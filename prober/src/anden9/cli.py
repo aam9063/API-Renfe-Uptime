@@ -13,6 +13,7 @@ import sys
 from collections.abc import Sequence
 
 from anden9.adapters.clock import SystemClock
+from anden9.adapters.health import start_health_server
 from anden9.adapters.http_httpx import HttpxTransport
 from anden9.adapters.store_supabase import SupabaseStore
 from anden9.config import Config, ConfigError
@@ -108,20 +109,29 @@ async def _observe(
     return apply_control_gate(result, control_ok=control.outcome is Outcome.UP)
 
 
-def build_store() -> tuple[Store | None, str]:
-    """The store is optional: without its two variables the loop measures and writes nothing."""
+def read_config() -> Config | None:
     try:
-        config = Config.from_environ()
+        return Config.from_environ()
     except ConfigError as error:
         sys.stderr.write(f"no database configured ({error}), measuring without writing" + NEWLINE)
-        return None, DEFAULT_REGION
-    store = SupabaseStore(url=config.supabase_url, service_role_key=config.service_role_key)
-    return store, config.region
+        return None
+
+
+def build_store(config: Config | None) -> Store | None:
+    """The store is optional: without its two variables the loop measures and writes nothing."""
+    if config is None:
+        return None
+    return SupabaseStore(url=config.supabase_url, service_role_key=config.service_role_key)
 
 
 async def _run_scheduler(specs: Sequence[ProbeSpec]) -> int:
     transport = HttpxTransport()
-    store, region = build_store()
+    config = read_config()
+    store = build_store(config)
+    region = config.region if config is not None else DEFAULT_REGION
+    if config is not None and config.health_port is not None:
+        # A platform that only keeps HTTP containers alive gets its endpoint; the loop is unchanged.
+        start_health_server(config.health_port)
     scheduler = Scheduler(
         http=transport,
         clock=SystemClock(),
